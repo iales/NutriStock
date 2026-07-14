@@ -12,11 +12,24 @@
   "app": {
     "windows": [
       {
-        "title": "nutristock",
-        "width": 800,
-        "height": 600
+        "label": "login",
+        "title": "Iniciar Sesión",
+        "width": 640,
+        "height": 480,
+        "resizable": false,   
+        "fullscreen": false,  
+        "visible": true  
+      },
+      {
+        "label": "main",
+        "title": "NutriStock",
+        "width": 1280,
+        "height": 720,
+        "resizable": true,    
+        "visible": false     
       }
     ],
+
     "security": {
       "csp": null
     }
