@@ -16,9 +16,10 @@
         "title": "Iniciar Sesión",
         "width": 640,
         "height": 480,
-        "resizable": false,   
-        "fullscreen": false,  
-        "visible": true  
+        "resizable": false,
+        "fullscreen": false,
+        "maximizable": false,
+        "visible": true
       },
       {
         "label": "main",
