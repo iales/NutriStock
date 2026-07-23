@@ -39,6 +39,7 @@ impl Clinica{
 }
 
 
+#[derive(Debug, serde::Deserialize)]
 pub struct ClinicaCreateRequest{
     pub razon_social: String,
     pub direccion: String,
@@ -48,6 +49,7 @@ pub struct ClinicaCreateRequest{
     pub contacto: Option<String>
 }
 
+#[derive(Debug, serde::Deserialize)]
 pub struct ClinicaUpdateRequest{
     pub razon_social: String,
     pub direccion: String,

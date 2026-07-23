@@ -1,4 +1,3 @@
-use tauri::webview::cookie::time::error;
 use thiserror::Error;
 use crate::services::clinica_service::ClinicaServiceError;
 use crate::services::service_login::LoginServiceError;

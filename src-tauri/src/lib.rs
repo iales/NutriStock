@@ -9,6 +9,10 @@ use crate::commands::bien_command::{
 };
 use tauri::Manager;
 
+use crate::commands::clinica_comand::{
+    find_clinica_by_id_command, registrar_nueva_clinica_command, listar_clinicas_command, update_clinica_command
+};
+
 fn init_db_pool(app: &tauri::App) -> Result<sqlx::SqlitePool, Box<dyn std::error::Error>> {
     let app_data_dir = app.path().app_data_dir()?;
     std::fs::create_dir_all(&app_data_dir)?;
@@ -40,6 +44,10 @@ pub fn run() {
             listar_bienes_command,
             ajustar_stock_command,
             setear_bien_command,
+            find_clinica_by_id_command,
+            registrar_nueva_clinica_command, 
+            listar_clinicas_command,
+            update_clinica_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
