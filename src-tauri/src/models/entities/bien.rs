@@ -14,3 +14,19 @@ impl Bien{
             Self {id: None,nombre, peso_kg, precio_centavos, stock_actual: 0 }
         } 
 }
+#[derive(Debug, serde::Deserialize)]
+pub struct BienCreateRequest{
+    pub nombre: String,
+    pub peso_kg: f64,
+    pub precio_centavos: u64
+}
+#[derive(Debug, serde::Deserialize)]
+pub struct BienUpdateRequest{
+    pub bien_id: i64,
+    pub delta: i32
+} 
+#[derive(Debug, serde::Deserialize)]
+pub struct BienSetRequest{
+    pub bien_id: i64,
+    pub value: u32
+}

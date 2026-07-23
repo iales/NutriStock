@@ -8,10 +8,12 @@ CREATE TABLE bien (
 
 CREATE TABLE clinica (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
+    razon_social TEXT NOT NULL,
     direccion TEXT NOT NULL,
-    codigo_postal TEXT NOT NULL,
-    cuit TEXT NOT NULL
+    localidad TEXT NOT NULL,
+    cuit TEXT NOT NULL,
+    condicion_iva TEXT NOT NULL
+    contacto TEXT 
 );
 
 CREATE TABLE entrega (

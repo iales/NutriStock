@@ -4,6 +4,9 @@ pub mod services;
 pub mod errors;
 
 use crate::commands::login_command::login_command;
+use crate::commands::bien_command::{
+    crear_bien_command, listar_bienes_command, ajustar_stock_command, setear_bien_command,
+};
 use tauri::Manager;
 
 fn init_db_pool(app: &tauri::App) -> Result<sqlx::SqlitePool, Box<dyn std::error::Error>> {
@@ -31,7 +34,13 @@ pub fn run() {
             app.manage(pool);
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![login_command])
+        .invoke_handler(tauri::generate_handler![
+            login_command,
+            crear_bien_command,
+            listar_bienes_command,
+            ajustar_stock_command,
+            setear_bien_command,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
