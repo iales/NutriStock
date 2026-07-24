@@ -1,17 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from "@mui/material";
+import theme from "./theme/theme";
 import App from "./App";
+import { HashRouter } from "react-router-dom";
+
  
-const customTheme = createTheme({
-  palette: {primary: { main: '#1976d2'}}
-});
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={customTheme}>
-      <App />
-    </ThemeProvider>
+    <HashRouter>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </HashRouter>
   </React.StrictMode>,
 
 );

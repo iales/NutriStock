@@ -12,8 +12,8 @@ CREATE TABLE clinica (
     direccion TEXT NOT NULL,
     localidad TEXT NOT NULL,
     cuit TEXT NOT NULL,
-    condicion_iva TEXT NOT NULL
-    contacto TEXT 
+    condicion_iva TEXT NOT NULL,
+    contacto TEXT
 );
 
 CREATE TABLE entrega (

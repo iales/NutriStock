@@ -1,0 +1,11 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "login-window",
+  "description": "Permisos mínimos para la ventana login: encontrar la ventana main, mostrarla, y ocultarse a sí misma tras un login exitoso.",
+  "windows": ["login"],
+  "permissions": [
+    "core:window:allow-get-all-windows",
+    "core:window:allow-show",
+    "core:window:allow-hide"
+  ]
+}

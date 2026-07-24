@@ -26,10 +26,13 @@
       {
         "label": "main",
         "title": "NutriStock",
+        "url": "index.html#/entregas",
         "width": 1280,
         "height": 720,
-        "resizable": true,    
-        "visible": false     
+        "minWidth": 1024,
+        "minHeight": 650,
+        "resizable": true,
+        "visible": false
       }
     ],
 
