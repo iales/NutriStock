@@ -11,14 +11,16 @@ pub struct Entrega{
 
 impl Entrega{
     pub fn new(
+        id: Option<i64>,
         clinica: Clinica,
-        items: Vec<ItemBien>
+        items: Vec<ItemBien>,
+        fecha: chrono::NaiveDateTime
      ) -> Self{
         Self { 
-            id: None,
+            id,
             clinica,
             items,
-            fecha: chrono::Local::now().naive_local() 
+            fecha
         }
      }
 

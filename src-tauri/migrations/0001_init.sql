@@ -26,5 +26,6 @@ CREATE TABLE item_bien (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     entrega_id INTEGER NOT NULL REFERENCES entrega(id),
     bien_id INTEGER NOT NULL REFERENCES bien(id),
-    cantidad INTEGER NOT NULL
+    cantidad INTEGER NOT NULL,
+    precio_unitario_centavos INTEGER NOT NULL
 );
