@@ -1,5 +1,5 @@
 use crate::models::entities::clinica::Clinica;
-use crate::models::entities::item_bien::ItemBien;
+use crate::models::entities::item_bien::{ItemBien,ItemBienRequest};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Entrega{
@@ -33,3 +33,7 @@ impl Entrega{
     }
 
 }
+
+
+#[derive(Debug, serde::Deserialize)]
+pub struct EntregaCreateRequest{ pub clinica_id: i64, pub  items: Vec<ItemBienRequest> }

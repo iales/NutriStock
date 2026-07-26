@@ -50,4 +50,9 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
         .await?.ok_or_else(|| BienServiceError::NotFoundBien(update_request.bien_id))
     }
 
+    async fn find_by_id(&self, id: i64) 
+        -> Result<Option<Bien>,BienServiceError> {
+        Ok(self.repo.find_by_id(id).await?)
+    }
+
 }

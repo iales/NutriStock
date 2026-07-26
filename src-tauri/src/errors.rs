@@ -2,6 +2,7 @@ use thiserror::Error;
 use crate::services::clinica_service::ClinicaServiceError;
 use crate::services::service_login::LoginServiceError;
 use crate::services::bien_service::BienServiceError;
+use crate::services::entrega_service::EntregaServiceError;
 
 #[derive(Debug, Error)]
 pub enum AppError{
@@ -12,8 +13,11 @@ pub enum AppError{
     Bien(#[from] BienServiceError),
 
     #[error(transparent)]
-    Clinica(#[from] ClinicaServiceError)
-}   
+    Clinica(#[from] ClinicaServiceError),
+
+    #[error(transparent)]
+    Entrega(#[from] EntregaServiceError)
+}
 
 impl AppError {
     fn tipo(&self) -> &'static str {
@@ -30,7 +34,15 @@ impl AppError {
                 ClinicaServiceError::InvalidFormatCuit => "Formato Invalido",
                 ClinicaServiceError::InvalidCuit => "Cuit Invalido",
                 ClinicaServiceError::DuplicateCuit => "Cuit ya existente",
-                ClinicaServiceError::VoidField => "Existen campos vacios"
+                ClinicaServiceError::VoidField => "Existen campos vacios",
+                ClinicaServiceError::ClinicaNotFound(_) => "ClinicaNoEncontrada",
+
+            },
+            AppError::Entrega(err) => match err {
+                EntregaServiceError::Repository(_) => "EntregaRepository",
+                EntregaServiceError::BienServiceError(_) => "BienService",
+                EntregaServiceError::EntregaNotFound(_) => "EntregaNoEncontrada",
+                EntregaServiceError::ClinicaServiceError(_) => "ClinicaService",
             }
 
         }

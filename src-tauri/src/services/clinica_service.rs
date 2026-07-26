@@ -18,7 +18,10 @@ pub enum ClinicaServiceError{
     DuplicateCuit,
 
     #[error("Faltan completar Campos")]
-    VoidField
+    VoidField,
+
+    #[error("no existe una clinica con id {0}")]
+    ClinicaNotFound(i64),
 }
 
 pub trait ClinicaService{
