@@ -15,8 +15,8 @@ const SIDEBAR_SELECTED_ICON = "#759FBD";
 
 const menuItems = [
     { label: "Nueva Entrega", to: "/entregas", icon: <LocalShippingIcon /> },
-    { label: "Control de Stock", to: "/stock", icon: <InventoryIcon /> },
-    { label: "Gestión de Clínicas", to: "/clinicas", icon: <LocalHospitalIcon /> },
+    { label: "Inventario", to: "/stock", icon: <InventoryIcon /> },
+    { label: "Clínicas", to: "/clinicas", icon: <LocalHospitalIcon /> },
 ];
 
 function AppLayout() {
