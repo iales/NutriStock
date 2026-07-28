@@ -69,6 +69,26 @@ impl BienRepository for BienRepositoryImpl{
         .await?;
 
         Ok(bien)
-        
     }
-} 
+
+    async fn delete(&self, bien_id: i64) -> Result<bool, BienRepositoryError> {
+        let resultado = sqlx::query("DELETE FROM bien WHERE id = ?")
+            .bind(bien_id)
+            .execute(&self.pool)
+            .await?;
+
+        Ok(resultado.rows_affected() > 0)
+    }
+
+    async fn setear_descripcion(&self, bien_id: i64, descripcion: String) 
+     -> Result<Option<Bien>, BienRepositoryError> {
+        let bien = sqlx::query_as::<_, Bien>
+            ("UPDATE bien SET nombre = ? WHERE id = ? RETURNING *")
+            .bind(descripcion)
+            .bind(bien_id)
+            .fetch_optional(&self.pool)
+            .await?;
+
+        Ok(bien)
+    } 
+}

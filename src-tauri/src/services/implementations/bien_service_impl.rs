@@ -2,7 +2,7 @@
 use crate::models::repositories::bien_repository::BienRepository;
 use crate::services::bien_service::BienServiceError;
 use crate::services::bien_service::BienService;
-use crate::models::entities::bien::{Bien, BienCreateRequest, BienUpdateRequest, BienSetRequest};
+use crate::models::entities::bien::{Bien, BienDescripcionRequest, BienCreateRequest, BienUpdateRequest, BienSetRequest};
 
 
 pub struct BienServiceImpl<R: BienRepository>{
@@ -22,7 +22,7 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
         }
 
         let bien: Bien = Bien::new(
-            bien_request.descripcion,
+            bien_request.nombre,
             bien_request.peso_kg,
             bien_request.precio_centavos);
 
@@ -34,7 +34,7 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
    async fn ajustar_stock(&self, update_request: BienUpdateRequest) 
    -> Result<Bien, BienServiceError> {
         self.repo
-        .ajustar_stock(update_request. bien_id, update_request.delta)
+        .ajustar_stock(update_request.bien_id, update_request.delta)
         .await?
         .ok_or_else(|| BienServiceError::InsufficientStock
             ("no existe Stock Suficiente para este bien".to_string()))
@@ -44,7 +44,7 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
        Ok(self.repo.listar_bienes().await?)
    }
 
-    async fn setear_bien(&self,update_request: BienSetRequest) 
+    async fn setear_stock(&self,update_request: BienSetRequest)
     -> Result<Bien,BienServiceError>{
         self.repo.setear_stock(update_request.bien_id, update_request.value)
         .await?.ok_or_else(|| BienServiceError::NotFoundBien(update_request.bien_id))
@@ -55,4 +55,23 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
         Ok(self.repo.find_by_id(id).await?)
     }
 
+    async fn delete(&self, id: i64) -> Result<(),BienServiceError> {
+        let borrado = self.repo.delete(id).await?;
+        if borrado {
+            Ok(())
+        } else {
+            Err(BienServiceError::NotFoundBien(id))
+        }
+    }
+
+    async fn setear_descripcion(&self, request: BienDescripcionRequest) 
+     -> Result<Bien, BienServiceError> {
+        self.repo.setear_descripcion(request.bien_id, request.descripcion)
+        .await?
+        .ok_or_else(|| BienServiceError::NotFoundBien(request.bien_id))
 }
+
+}
+
+
+

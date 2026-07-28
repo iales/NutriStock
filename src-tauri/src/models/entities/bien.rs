@@ -11,12 +11,12 @@ impl Bien{
     pub fn new(descripcion: String, 
         peso_kg: f64, 
         precio_centavos: u64) -> Self{
-            Self {id: None,descripcion, peso_kg, precio_centavos, stock_actual: 0 }
+            Self {id: None, descripcion, peso_kg, precio_centavos, stock_actual: 0 }
         } 
 }
 #[derive(Debug, serde::Deserialize)]
 pub struct BienCreateRequest{
-    pub descripcion: String,
+    pub nombre: String,
     pub peso_kg: f64,
     pub precio_centavos: u64
 }
@@ -29,4 +29,10 @@ pub struct BienUpdateRequest{
 pub struct BienSetRequest{
     pub bien_id: i64,
     pub value: u32
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct BienDescripcionRequest { 
+    pub bien_id: i64, 
+    pub descripcion: String 
 }

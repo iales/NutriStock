@@ -5,7 +5,8 @@ pub mod errors;
 
 use crate::commands::login_command::login_command;
 use crate::commands::bien_command::{
-    crear_bien_command, listar_bienes_command, ajustar_stock_command, setear_bien_command,
+    crear_bien_command, listar_bienes_command, ajustar_stock_command, setear_stock_command,
+    setear_descripcion_command, eliminar_bien_command,
 };
 use tauri::Manager;
 
@@ -47,7 +48,9 @@ pub fn run() {
             crear_bien_command,
             listar_bienes_command,
             ajustar_stock_command,
-            setear_bien_command,
+            setear_stock_command,
+            setear_descripcion_command,
+            eliminar_bien_command,
             find_clinica_by_id_command,
             registrar_nueva_clinica_command, 
             listar_clinicas_command,

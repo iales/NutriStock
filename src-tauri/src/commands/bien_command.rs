@@ -1,4 +1,4 @@
-use crate::models::entities::bien::{Bien, BienCreateRequest, BienSetRequest, BienUpdateRequest};
+use crate::models::entities::bien::{Bien, BienCreateRequest, BienDescripcionRequest, BienSetRequest, BienUpdateRequest};
 use crate::errors::AppError;
 use crate::models::repositories::implementations::bien_repository_impl::BienRepositoryImpl;
 use crate::services::bien_service::BienService;
@@ -30,11 +30,27 @@ pub async fn ajustar_stock_command(
 }
 
 #[tauri::command]
-pub async fn setear_bien_command(
+pub async fn setear_stock_command(
     pool: tauri::State<'_, sqlx::SqlitePool>,
     request: BienSetRequest
-    ) -> Result<Bien, AppError> { 
-       Ok(bien_service(pool.inner()).setear_bien(request).await?)
+    ) -> Result<Bien, AppError> {
+       Ok(bien_service(pool.inner()).setear_stock(request).await?)
+}
+
+#[tauri::command]
+pub async fn setear_descripcion_command(
+    pool: tauri::State<'_, sqlx::SqlitePool>,
+    request: BienDescripcionRequest
+    ) -> Result<Bien, AppError> {
+       Ok(bien_service(pool.inner()).setear_descripcion(request).await?)
+}
+
+#[tauri::command]
+pub async fn eliminar_bien_command(
+    pool: tauri::State<'_, sqlx::SqlitePool>,
+    id: i64
+    ) -> Result<(), AppError> {
+       Ok(bien_service(pool.inner()).delete(id).await?)
 }
 
 fn bien_service(pool: &sqlx::SqlitePool) -> impl BienService {
