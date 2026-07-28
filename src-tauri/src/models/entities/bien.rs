@@ -1,22 +1,22 @@
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct Bien{
     pub id: Option<i64>,
-    pub nombre: String,
+    pub descripcion: String,
     pub peso_kg: f64,
     pub precio_centavos: u64,
     pub stock_actual: u32
 }
 
 impl Bien{
-    pub fn new(nombre: String, 
+    pub fn new(descripcion: String, 
         peso_kg: f64, 
         precio_centavos: u64) -> Self{
-            Self {id: None,nombre, peso_kg, precio_centavos, stock_actual: 0 }
+            Self {id: None,descripcion, peso_kg, precio_centavos, stock_actual: 0 }
         } 
 }
 #[derive(Debug, serde::Deserialize)]
 pub struct BienCreateRequest{
-    pub nombre: String,
+    pub descripcion: String,
     pub peso_kg: f64,
     pub precio_centavos: u64
 }

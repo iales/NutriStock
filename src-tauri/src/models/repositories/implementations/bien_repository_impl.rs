@@ -14,8 +14,8 @@ impl BienRepository for BienRepositoryImpl{
     async fn crear(&self, bien: Bien) -> 
     Result<Bien,BienRepositoryError> {
         let bien_creado 
-        = sqlx::query_as::<_,Bien>("INSERT INTO bien (nombre, peso_kg, precio_centavos, stock_actual) VALUES (?,?,?,?) RETURNING *")
-        .bind(&bien.nombre)
+        = sqlx::query_as::<_,Bien>("INSERT INTO bien (descripcion, peso_kg, precio_centavos, stock_actual) VALUES (?,?,?,?) RETURNING *")
+        .bind(&bien.descripcion)
         .bind(bien.peso_kg)
         .bind(bien.precio_centavos as i64)
         .bind(bien.stock_actual)

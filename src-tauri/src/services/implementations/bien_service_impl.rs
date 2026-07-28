@@ -22,7 +22,7 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
         }
 
         let bien: Bien = Bien::new(
-            bien_request.nombre,
+            bien_request.descripcion,
             bien_request.peso_kg,
             bien_request.precio_centavos);
 

@@ -37,11 +37,12 @@ impl <ER: EntregaRepository + Sync, BR: BienService + Sync, CR: ClinicaService +
                 items.push(ItemBien::new(
                     bien, 
                     item.cantidad,
-                    item.precio_unitario_centavos.unwrap_or(precio)
+                    precio
                  ));
             }
 
-            Ok(Entrega::new(None, clinica, items, chrono::Local::now().naive_local()))
+            let entrega= Entrega::new(None, clinica, items, chrono::Local::now().naive_local(), request.condicion_venta);
+            Ok(self.entrega_repo.crear(entrega).await?)
         }
 
         async fn find_by_id(&self, entrega_id: i64 ) 

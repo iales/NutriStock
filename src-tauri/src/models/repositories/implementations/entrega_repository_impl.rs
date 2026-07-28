@@ -20,10 +20,11 @@ impl EntregaRepository for EntregaRepositoryImpl{
         let mut transaction = self.pool.begin().await?;
          
          let entrega_id: i64 = sqlx::query_scalar(
-            "INSERT INTO entrega (clinica_id, fecha) VALUES (?, ?) RETURNING id"
+            "INSERT INTO entrega (clinica_id, fecha, condicion_venta) VALUES (?, ?,?) RETURNING id"
         )
         .bind(entrega.clinica.id)
         .bind(entrega.fecha)
+        .bind(entrega.condicion_venta.clone())
         .fetch_one(&mut *transaction)
         .await?;
 
@@ -91,7 +92,7 @@ impl EntregaRepository for EntregaRepositoryImpl{
         
         
 
-        Ok(Some(Entrega::new(Some(entrega_row.id) ,clinica, items, entrega_row.fecha)))
+        Ok(Some(Entrega::new(Some(entrega_row.id) ,clinica, items, entrega_row.fecha, entrega_row.condicion_venta)))
     }
 
     async fn listar_entregas(&self) 
@@ -127,7 +128,7 @@ impl EntregaRepository for EntregaRepositoryImpl{
                 .fetch_one(&self.pool)
                 .await?;
 
-            entregas.push(Entrega::new(Some(entrega_row.id) ,clinica, items, entrega_row.fecha));
+            entregas.push(Entrega::new(Some(entrega_row.id) ,clinica, items, entrega_row.fecha, entrega_row.condicion_venta));
         }
 
         Ok(entregas)
@@ -140,6 +141,7 @@ struct EntregaRow {
     id: i64,
     clinica_id: i64,
     fecha: chrono::NaiveDateTime,
+    condicion_venta: Option<String>
 }
 
 #[derive(sqlx::FromRow)]
