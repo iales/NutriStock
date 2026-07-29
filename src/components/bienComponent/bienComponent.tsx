@@ -11,7 +11,6 @@ import {
     Box, 
     Divider,
     IconButton,
-    InputBase
 } from "@mui/material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -19,7 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import EditIcon from '@mui/icons-material/Edit';
 import { invoke } from '@tauri-apps/api/core';
-import { useState, useEffect} from "react";
+import { useState } from "react";
 import DeletedBienPopUp from "../popups/deleteBienPopUp"; 
 import EditBienPopUp from "../popups/editBienPopUp";
 
@@ -32,27 +31,7 @@ interface BienComponentProps {
 function BienComponent(props: BienComponentProps) {
 
     const [confirmandoModificar, setConfirmandoModificar] = useState(false);
-    const [valorStock, setValorStock] = useState(props.bien.stock_actual);
     const [confirmandoEliminar, setConfirmandoEliminar] = useState(false);
-
-    useEffect(() => {
-    setValorStock(bien.stock_actual);
-    }, [props.bien.stock_actual]);
-
-    const iniciarEdicion = () => {
-        setValorStock(bien.stock_actual);
-    };
-
-    const confirmarStock = async () => {
-        try {
-            const bienActualizado = await invoke<Bien>('setear_stock_command', {
-                request: { bien_id: bien.id, value: valorStock },
-            });
-            props.onActualizado(bienActualizado);
-        } catch (error) {
-            console.error("No se pudo setear el stock:", error);
-        }
-    };
 
     const ajustarStock = async (delta: number) => {
         try {
@@ -87,7 +66,14 @@ function BienComponent(props: BienComponentProps) {
     }
 
     return (<>
-          <Card variant="outlined" sx={{ mb: 2 }}>
+          <Card 
+                variant="outlined" 
+                sx={{ 
+                mt:3, 
+                mb: 2,
+                borderRadius: 5,
+                borderColor: "grey.500",
+            }}>
             <CardContent>
                 <Stack direction="row" spacing={2} sx={{alignItems: "flex-start"}}>
                     <Avatar sx={{ bgcolor: "grey.100" }}>
@@ -105,42 +91,9 @@ function BienComponent(props: BienComponentProps) {
                         <Chip label={estadoTexto} color={estadoColor} />
 
                         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-                                    <Typography
-                                        variant="body2"
-                                        color="text.secondary"
-                                        onClick={iniciarEdicion}
-                                        sx={{ cursor: "pointer" }}
-                                    >
-                                        En depósito: 
-                                    </Typography>
-
-                                <InputBase
-                                        value={valorStock}
-                                        onChange={(e) => setValorStock(Number(e.target.value))}
-                                        onKeyDown={(e) => { if (e.key === "Enter") confirmarStock(); }}
-                                        onBlur={confirmarStock}
-                                        autoFocus
-                                        type="number"
-                                        inputProps={{ style: { textAlign: "center" } }}
-                                        sx={{
-                                            width: 40,
-                                            borderRadius: 1,
-                                            boxShadow: "0 0 8px 4px rgba(0,0,0,0.3)",
-                                            px: 0.5,
-                                            py: 0.5,
-                                            "& input[type=number]": {
-                                                MozAppearance: "textfield",
-                                            },
-                                            "& input[type=number]::-webkit-outer-spin-button": {
-                                                WebkitAppearance: "none",
-                                                margin: 0,
-                                            },
-                                            "& input[type=number]::-webkit-inner-spin-button": {
-                                                WebkitAppearance: "none",
-                                                margin: 0,
-                                            },
-                                        }}
-                                    />
+                            <Typography variant="body2" color="text.secondary">
+                                En depósito: {bien.stock_actual}
+                            </Typography>                          
                             <IconButton size="small" onClick={() => ajustarStock(-1)} sx={{ borderRadius: 1, border: 1, borderColor: "divider" }}>
                                 <RemoveIcon fontSize="small" />
                             </IconButton>
@@ -159,6 +112,7 @@ function BienComponent(props: BienComponentProps) {
                     variant="outlined" 
                     startIcon={<EditIcon/>} 
                     onClick={() => setConfirmandoModificar(true)}
+                    color="success"
                 >
                     Modificar
                 </Button>

@@ -16,7 +16,7 @@ impl Bien{
 }
 #[derive(Debug, serde::Deserialize)]
 pub struct BienCreateRequest{
-    pub nombre: String,
+    pub descripcion: String,
     pub peso_kg: f64,
     pub precio_centavos: u64
 }
@@ -36,4 +36,5 @@ pub struct BienActualizarRequest {
     pub bien_id: i64, 
     pub descripcion: String,
     pub precio_centavos: u64,
+    pub stock_actual: u32,
 }

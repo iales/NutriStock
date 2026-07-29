@@ -25,4 +25,6 @@ export interface BienSetRequest {
 export interface BienActualizarRequest {
   bien_id: number;
   descripcion: string;
+  precio_centavos: number;
+  stock_actual: number;
 }

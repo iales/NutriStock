@@ -19,21 +19,31 @@ interface EditBienProps {
 
 function EditBienPopUp(props: EditBienProps) {
     const [valorDescripcion, setValorDescripcion] = useState(props.bien.descripcion);
+    const [valorPrecio, setValorPrecio] = useState(props.bien.precio_centavos / 100);
+    const [valorStock, setValorStock] = useState(props.bien.stock_actual);
 
     useEffect(() => {
         if (props.open) {
             setValorDescripcion(props.bien.descripcion);
+            setValorPrecio(props.bien.precio_centavos / 100);
+            setValorStock(props.bien.stock_actual);
         }
-    }, [props.open, props.bien.descripcion]);
-
+    }, [props.open, props.bien.descripcion, props.bien.precio_centavos, props.bien.stock_actual]);
+    
     const guardar = async () => {
         try {
             const bienActualizado = await invoke<Bien>('actualizar_bien_command', {
-                request: { bien_id: props.bien.id, descripcion: valorDescripcion },
+                request: {
+                    bien_id: props.bien.id,
+                    descripcion: valorDescripcion,
+                    precio_centavos: Math.round(valorPrecio * 100),
+                    stock_actual: valorStock,
+                },
+
             });
             props.onActualizado(bienActualizado);
         } catch (error) {
-            console.error("No se pudo actualizar la descripción:", error);
+            console.error("No se pudo actualizar el bien:", error);
         } finally {
             props.onClose();
         }
@@ -52,6 +62,49 @@ function EditBienPopUp(props: EditBienProps) {
                     value={valorDescripcion}
                     onChange={(e) => setValorDescripcion(e.target.value)}
                 />
+                <TextField
+                    fullWidth
+                    margin="dense"
+                    label="Precio"
+                    type="number"
+                    value={valorPrecio}
+                    onChange={(e) => setValorPrecio(Number(e.target.value))}
+                    sx={{
+                        "& input[type=number]": {
+                            MozAppearance: "textfield",
+                        },
+                        "& input[type=number]::-webkit-outer-spin-button": {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                        },
+                        "& input[type=number]::-webkit-inner-spin-button": {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                        },
+                    }}
+                />
+                <TextField
+                    fullWidth
+                    margin="dense"
+                    label="Stock"
+                    type="number"
+                    value={valorStock}
+                    onChange={(e) => setValorStock(Number(e.target.value))}
+                    sx={{
+                        "& input[type=number]": {
+                            MozAppearance: "textfield",
+                        },
+                        "& input[type=number]::-webkit-outer-spin-button": {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                        },
+                        "& input[type=number]::-webkit-inner-spin-button": {
+                            WebkitAppearance: "none",
+                            margin: 0,
+                        },
+                    }}
+                />
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.onClose}>Cancelar</Button>

@@ -80,16 +80,17 @@ impl BienRepository for BienRepositoryImpl{
         Ok(resultado.rows_affected() > 0)
     }
 
-    async fn actualizar_bien(&self, bien_id: i64, descripcion: String, precio_centavos: u64)
+    async fn actualizar_bien(&self, bien_id: i64, descripcion: String, precio_centavos: u64, stock_actual: u32)
      -> Result<Option<Bien>, BienRepositoryError> {
         let bien = sqlx::query_as::<_, Bien>
-        ("UPDATE bien SET descripcion = ?, precio_centavos = ? WHERE id = ? RETURNING *")
+            ("UPDATE bien SET descripcion = ?, precio_centavos = ?, stock_actual = ? WHERE id = ? RETURNING *")
             .bind(descripcion)
             .bind(precio_centavos as i64)
+            .bind(stock_actual)
             .bind(bien_id)
             .fetch_optional(&self.pool)
             .await?;
 
-        Ok(bien)
-    } 
+    Ok(bien)
+}
 }

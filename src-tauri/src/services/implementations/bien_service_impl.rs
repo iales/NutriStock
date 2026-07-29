@@ -22,7 +22,7 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
         }
 
         let bien: Bien = Bien::new(
-            bien_request.nombre,
+            bien_request.descripcion,
             bien_request.peso_kg,
             bien_request.precio_centavos);
 
@@ -66,7 +66,7 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
 
     async fn actualizar_bien(&self, request: BienActualizarRequest)
      -> Result<Bien, BienServiceError> {
-        self.repo.actualizar_bien(request.bien_id, request.descripcion, request.precio_centavos)
+        self.repo.actualizar_bien(request.bien_id, request.descripcion, request.precio_centavos, request.stock_actual)
         .await?
         .ok_or_else(|| BienServiceError::NotFoundBien(request.bien_id))
 }

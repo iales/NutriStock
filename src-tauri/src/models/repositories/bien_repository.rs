@@ -8,7 +8,7 @@ pub trait  BienRepository{
     fn setear_stock(&self, bien_id: i64, value: u32) -> impl std::future::Future<Output = Result<Option<Bien>, BienRepositoryError>> + Send;
     fn find_by_id(&self, bien_id: i64) -> impl std::future::Future<Output = Result<Option<Bien>, BienRepositoryError>> + Send;
     fn delete(&self, bien_id: i64) -> impl std::future::Future<Output = Result<bool, BienRepositoryError>> + Send;
-    fn actualizar_bien(&self, bien_id: i64, descripcion: String, precio_centavos: u64) -> impl std::future::Future<Output = Result<Option<Bien>, BienRepositoryError>> + Send;
+    fn actualizar_bien(&self, bien_id: i64, descripcion: String, precio_centavos: u64, stock_actual: u32) -> impl std::future::Future<Output = Result<Option<Bien>, BienRepositoryError>> + Send;
 }
 
 #[derive(Debug,Error)]
