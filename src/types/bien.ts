@@ -21,3 +21,8 @@ export interface BienSetRequest {
   bien_id: number;
   value: number;
 }
+
+export interface BienActualizarRequest {
+  bien_id: number;
+  descripcion: string;
+}
