@@ -2,7 +2,7 @@
 use crate::models::repositories::bien_repository::BienRepository;
 use crate::services::bien_service::BienServiceError;
 use crate::services::bien_service::BienService;
-use crate::models::entities::bien::{Bien, BienDescripcionRequest, BienCreateRequest, BienUpdateRequest, BienSetRequest};
+use crate::models::entities::bien::{Bien, BienActualizarRequest, BienCreateRequest, BienUpdateRequest, BienSetRequest};
 
 
 pub struct BienServiceImpl<R: BienRepository>{
@@ -64,9 +64,9 @@ impl<R: BienRepository + Sync> BienService for BienServiceImpl<R>{
         }
     }
 
-    async fn setear_descripcion(&self, request: BienDescripcionRequest) 
+    async fn actualizar_bien(&self, request: BienActualizarRequest)
      -> Result<Bien, BienServiceError> {
-        self.repo.setear_descripcion(request.bien_id, request.descripcion)
+        self.repo.actualizar_bien(request.bien_id, request.descripcion, request.precio_centavos)
         .await?
         .ok_or_else(|| BienServiceError::NotFoundBien(request.bien_id))
 }

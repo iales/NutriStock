@@ -32,7 +32,8 @@ pub struct BienSetRequest{
 }
 
 #[derive(Debug, serde::Deserialize)]
-pub struct BienDescripcionRequest { 
+pub struct BienActualizarRequest {
     pub bien_id: i64, 
-    pub descripcion: String 
+    pub descripcion: String,
+    pub precio_centavos: u64,
 }

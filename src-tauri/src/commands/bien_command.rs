@@ -1,4 +1,4 @@
-use crate::models::entities::bien::{Bien, BienCreateRequest, BienDescripcionRequest, BienSetRequest, BienUpdateRequest};
+use crate::models::entities::bien::{Bien, BienActualizarRequest, BienCreateRequest, BienSetRequest, BienUpdateRequest};
 use crate::errors::AppError;
 use crate::models::repositories::implementations::bien_repository_impl::BienRepositoryImpl;
 use crate::services::bien_service::BienService;
@@ -38,11 +38,11 @@ pub async fn setear_stock_command(
 }
 
 #[tauri::command]
-pub async fn setear_descripcion_command(
+pub async fn actualizar_bien_command(
     pool: tauri::State<'_, sqlx::SqlitePool>,
-    request: BienDescripcionRequest
+    request: BienActualizarRequest
     ) -> Result<Bien, AppError> {
-       Ok(bien_service(pool.inner()).setear_descripcion(request).await?)
+       Ok(bien_service(pool.inner()).actualizar_bien(request).await?)
 }
 
 #[tauri::command]
