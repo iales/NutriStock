@@ -2,6 +2,7 @@
 use crate::errors::AppError;
 use crate::models::entities::entrega::{Entrega, EntregaCreateRequest};
 use crate::models::repositories::implementations::bien_repository_impl::BienRepositoryImpl;
+use crate::models::repositories::implementations::lote_bien_repository_impl::LoteBienRepositoryImpl;
 use crate::models::repositories::implementations::clinica_repository_impl::ClinicaRepositoryImpl;
 use crate::models::repositories::implementations::entrega_repository_impl::EntregaRepositoryImpl;
 use crate::services::entrega_service::EntregaService;
@@ -36,7 +37,7 @@ fn entrega_service(
     pool: &sqlx::SqlitePool,
 ) -> impl EntregaService {
     let entrega_repo = EntregaRepositoryImpl::new(pool.clone());
-    let bien_service = BienServiceImpl::new(BienRepositoryImpl::new(pool.clone()));
+    let bien_service = BienServiceImpl::new(BienRepositoryImpl::new(pool.clone()), LoteBienRepositoryImpl::new(pool.clone()));
     let clinica_service = ClinicaServiceImpl::new(ClinicaRepositoryImpl::new(pool.clone()));
     EntregaServiceImpl::new(entrega_repo, bien_service, clinica_service)
 }

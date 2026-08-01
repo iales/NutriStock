@@ -8,6 +8,9 @@ use crate::commands::bien_command::{
     crear_bien_command, listar_bienes_command, ajustar_stock_command, setear_stock_command,
     actualizar_bien_command, eliminar_bien_command,
 };
+use crate::commands::lote_bien_command::{
+    recibir_lote_command, listar_lotes_por_bien_command,
+};
 use tauri::Manager;
 
 use crate::commands::clinica_comand::{
@@ -51,6 +54,8 @@ pub fn run() {
             setear_stock_command,
             actualizar_bien_command,
             eliminar_bien_command,
+            recibir_lote_command,
+            listar_lotes_por_bien_command,
             find_clinica_by_id_command,
             registrar_nueva_clinica_command, 
             listar_clinicas_command,

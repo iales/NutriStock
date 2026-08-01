@@ -3,6 +3,8 @@ use crate::models::repositories::entrega_repository::{EntregaRepository, Entrega
 use crate::models::entities::entrega::Entrega;
 use crate::models::entities::bien::Bien;
 use crate::models::entities::clinica::Clinica;
+use crate::models::repositories::implementations::bien_repository_impl::BIEN_SELECT_AGREGADO;
+use crate::models::repositories::implementations::lote_bien_repository_impl::consumir_fifo;
 
 pub struct EntregaRepositoryImpl{
     pool: sqlx::SqlitePool
@@ -32,14 +34,10 @@ impl EntregaRepository for EntregaRepositoryImpl{
             let bien_id = item.bien.id
                 .expect("Bien sin id al crear entrega — debería estar persistido");
 
-            sqlx::query_as::<_, Bien>
-                ("UPDATE bien SET stock_actual = stock_actual - ? WHERE id = ? AND stock_actual - ? >= 0 RETURNING *")
-                .bind(item.cantidad)
-                .bind(bien_id)
-                .bind(item.cantidad)
-                .fetch_optional(&mut *transaction)
-                .await?
-                .ok_or_else(|| EntregaRepositoryError::StockInsuficiente(bien_id))?;
+            let satisfecho = consumir_fifo(&mut transaction, bien_id, item.cantidad as i64).await?;
+            if !satisfecho {
+                return Err(EntregaRepositoryError::StockInsuficiente(bien_id));
+            }
 
             sqlx::query("INSERT INTO item_bien (entrega_id,bien_id,cantidad,precio_unitario_centavos) VALUES (?,?,?,?)")
                 .bind(entrega_id)
@@ -66,8 +64,8 @@ impl EntregaRepository for EntregaRepositoryImpl{
         let mut items: Vec<ItemBien> = Vec::new();
         
         for item in items_bien {
-            let bien =  sqlx::query_as::<_, Bien>
-                ("SELECT * FROM bien WHERE id = ?")
+            let bien_query = format!("{BIEN_SELECT_AGREGADO} WHERE b.id = ? GROUP BY b.id");
+            let bien = sqlx::query_as::<_, Bien>(&bien_query)
                 .bind(item.bien_id)
                 .fetch_one(&self.pool)
                 .await?;
@@ -113,8 +111,8 @@ impl EntregaRepository for EntregaRepositoryImpl{
             let mut items: Vec<ItemBien> = Vec::new();
         
             for item in items_bien {
-                let bien =  sqlx::query_as::<_, Bien>
-                    ("SELECT * FROM bien WHERE id = ?")
+                let bien_query = format!("{BIEN_SELECT_AGREGADO} WHERE b.id = ? GROUP BY b.id");
+                let bien = sqlx::query_as::<_, Bien>(&bien_query)
                     .bind(item.bien_id)
                     .fetch_one(&self.pool)
                     .await?;

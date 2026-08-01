@@ -2,6 +2,7 @@ use thiserror::Error;
 use crate::services::clinica_service::ClinicaServiceError;
 use crate::services::service_login::LoginServiceError;
 use crate::services::bien_service::BienServiceError;
+use crate::services::lote_bien_service::LoteBienServiceError;
 use crate::services::entrega_service::EntregaServiceError;
 
 #[derive(Debug, Error)]
@@ -11,6 +12,9 @@ pub enum AppError{
 
     #[error(transparent)]
     Bien(#[from] BienServiceError),
+
+    #[error(transparent)]
+    LoteBien(#[from] LoteBienServiceError),
 
     #[error(transparent)]
     Clinica(#[from] ClinicaServiceError),
@@ -28,6 +32,13 @@ impl AppError {
                 BienServiceError::InvalidWeight => "PesoInvalido",
                 BienServiceError::InsufficientStock(_) => "StockInsuficiente",
                 BienServiceError::NotFoundBien(_) => "BienNoEncontrado",
+                BienServiceError::LoteBienRepository(_) => "LoteBienRepositorio",
+            },
+            AppError::LoteBien(err) => match err {
+                LoteBienServiceError::LoteBienRepository(_) => "LoteBienRepositorio",
+                LoteBienServiceError::BienService(_) => "BienService",
+                LoteBienServiceError::InvalidCantidad => "CantidadInvalida",
+                LoteBienServiceError::NotFoundBien(_) => "BienNoEncontrado",
             },
             AppError::Clinica(err) => match err{
                 ClinicaServiceError::ClinicaRepository(_) => "ClinicaRepository",

@@ -1,13 +1,16 @@
-use nutristock_lib::models::entities::bien::Bien;
+use nutristock_lib::models::entities::bien::{Bien, CategoriaNutricional};
 use nutristock_lib::models::entities::clinica::{Clinica, CondicionIva};
 use nutristock_lib::models::entities::entrega::Entrega;
 use nutristock_lib::models::entities::item_bien::ItemBien;
+use nutristock_lib::models::entities::lote_bien::LoteBien;
 use nutristock_lib::models::repositories::bien_repository::BienRepository;
 use nutristock_lib::models::repositories::clinica_repository::ClinicaRepository;
 use nutristock_lib::models::repositories::entrega_repository::{EntregaRepository, EntregaRepositoryError};
+use nutristock_lib::models::repositories::lote_bien_repository::LoteBienRepository;
 use nutristock_lib::models::repositories::implementations::bien_repository_impl::BienRepositoryImpl;
 use nutristock_lib::models::repositories::implementations::clinica_repository_impl::ClinicaRepositoryImpl;
 use nutristock_lib::models::repositories::implementations::entrega_repository_impl::EntregaRepositoryImpl;
+use nutristock_lib::models::repositories::implementations::lote_bien_repository_impl::LoteBienRepositoryImpl;
 use sqlx::SqlitePool;
 
 async fn setup_pool() -> SqlitePool {
@@ -31,9 +34,18 @@ async fn crear_clinica_de_prueba(pool: &SqlitePool) -> Clinica {
 
 async fn crear_bien_de_prueba(pool: &SqlitePool, stock_inicial: u32) -> Bien {
     let repo = BienRepositoryImpl::new(pool.clone());
-    let mut bien = Bien::new("Leche en polvo".into(), 1.0, 50000);
-    bien.stock_actual = stock_inicial;
-    repo.crear(bien).await.expect("no se pudo crear el bien de prueba")
+    let bien = Bien::new("Leche en polvo".into(), 1.0, 50000, CategoriaNutricional::Lacteos);
+    let bien_creado = repo.crear(bien).await.expect("no se pudo crear el bien de prueba");
+
+    if stock_inicial > 0 {
+        let lote_repo = LoteBienRepositoryImpl::new(pool.clone());
+        lote_repo
+            .crear(LoteBien::new(bien_creado.id.unwrap(), stock_inicial, None))
+            .await
+            .expect("no se pudo cargar el lote de prueba");
+    }
+
+    Bien { stock_actual: stock_inicial, ..bien_creado }
 }
 
 #[tokio::test]

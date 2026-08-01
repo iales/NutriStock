@@ -1,4 +1,4 @@
-use crate::models::{entities::bien::{Bien, BienActualizarRequest ,BienCreateRequest,BienUpdateRequest, BienSetRequest}, repositories::bien_repository::BienRepositoryError};
+use crate::models::{entities::bien::{Bien, BienActualizarRequest ,BienCreateRequest,BienUpdateRequest, BienSetRequest}, repositories::{bien_repository::BienRepositoryError, lote_bien_repository::LoteBienRepositoryError}};
 use thiserror::Error;
 
 pub trait BienService{
@@ -15,6 +15,9 @@ pub trait BienService{
 pub enum BienServiceError{
     #[error(transparent)]
     BienRepository(#[from] BienRepositoryError),
+
+    #[error(transparent)]
+    LoteBienRepository(#[from] LoteBienRepositoryError),
 
     #[error("el peso no puede ser negativo")]
     InvalidWeight,

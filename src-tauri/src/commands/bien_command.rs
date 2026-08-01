@@ -1,6 +1,7 @@
 use crate::models::entities::bien::{Bien, BienActualizarRequest, BienCreateRequest, BienSetRequest, BienUpdateRequest};
 use crate::errors::AppError;
 use crate::models::repositories::implementations::bien_repository_impl::BienRepositoryImpl;
+use crate::models::repositories::implementations::lote_bien_repository_impl::LoteBienRepositoryImpl;
 use crate::services::bien_service::BienService;
 use crate::services::implementations::bien_service_impl::BienServiceImpl;
 
@@ -55,5 +56,6 @@ pub async fn eliminar_bien_command(
 
 fn bien_service(pool: &sqlx::SqlitePool) -> impl BienService {
     let repo = BienRepositoryImpl::new(pool.clone());
-    BienServiceImpl::new(repo)
+    let lote_repo = LoteBienRepositoryImpl::new(pool.clone());
+    BienServiceImpl::new(repo, lote_repo)
 }
