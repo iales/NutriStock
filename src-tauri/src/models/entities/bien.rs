@@ -5,7 +5,8 @@ pub struct Bien{
     pub peso_kg: f64,
     pub precio_centavos: u64,
     pub stock_actual: u32,
-    pub categoria_nutricional: CategoriaNutricional
+    pub categoria_nutricional: CategoriaNutricional,
+    pub proximo_vencimiento: Option<chrono::NaiveDate>
 }
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize, sqlx::Type)]
 #[sqlx(type_name = "TEXT", rename_all = "snake_case")]
@@ -25,7 +26,7 @@ impl Bien{
         precio_centavos: u64,
         categoria_nutricional: CategoriaNutricional
     ) -> Self{
-            Self {id: None, descripcion, peso_kg, precio_centavos, stock_actual: 0,categoria_nutricional }
+            Self {id: None, descripcion, peso_kg, precio_centavos, stock_actual: 0, categoria_nutricional, proximo_vencimiento: None }
         } 
 }
 #[derive(Debug, serde::Deserialize)]

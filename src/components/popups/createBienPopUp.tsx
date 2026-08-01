@@ -1,14 +1,36 @@
 import {
     Dialog,
-    DialogContent,
+    DialogSurface,
+    DialogBody,
     DialogTitle,
+    DialogContent,
     DialogActions,
     Button,
-    TextField,
-} from "@mui/material";
+    Field,
+    Input,
+    Dropdown,
+    Option,
+    makeStyles,
+    tokens,
+} from "@fluentui/react-components";
 import { useState, useEffect } from "react";
-import { Bien } from "../../types/bien";
+import { Bien, CategoriaNutricional, CATEGORIAS_NUTRICIONALES } from "../../types/bien";
 import { invoke } from "@tauri-apps/api/core";
+
+const useStyles = makeStyles({
+    content: {
+        display: "flex",
+        flexDirection: "column",
+        gap: tokens.spacingVerticalS,
+    },
+    noSpinner: {
+        "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+            WebkitAppearance: "none",
+            margin: 0,
+        },
+        "-moz-appearance": "textfield",
+    },
+});
 
 interface CreateBienProps {
     open: boolean;
@@ -17,15 +39,18 @@ interface CreateBienProps {
 }
 
 function CreateBienPopUp(props: CreateBienProps) {
+    const styles = useStyles();
     const [descripcion, setDescripcion] = useState("");
     const [pesoKg, setPesoKg] = useState(0);
     const [precio, setPrecio] = useState(0);
+    const [categoria, setCategoria] = useState<CategoriaNutricional>("Lacteos");
 
     useEffect(() => {
         if (props.open) {
             setDescripcion("");
             setPesoKg(0);
             setPrecio(0);
+            setCategoria("Lacteos");
         }
     }, [props.open]);
 
@@ -36,6 +61,7 @@ function CreateBienPopUp(props: CreateBienProps) {
                     descripcion,
                     peso_kg: pesoKg,
                     precio_centavos: Math.round(precio * 100),
+                    categoria_nutricional: categoria,
                 },
             });
             props.onCreado(bienCreado);
@@ -47,38 +73,59 @@ function CreateBienPopUp(props: CreateBienProps) {
     };
 
     return (
-        <Dialog open={props.open} onClose={props.onClose} maxWidth="sm" fullWidth>
-            <DialogTitle>Nuevo producto</DialogTitle>
-            <DialogContent>
-                <TextField
-                    autoFocus
-                    fullWidth
-                    margin="dense"
-                    label="Descripción"
-                    value={descripcion}
-                    onChange={(e) => setDescripcion(e.target.value)}
-                />
-                <TextField
-                    fullWidth
-                    margin="dense"
-                    label="Peso (kg)"
-                    type="number"
-                    value={pesoKg}
-                    onChange={(e) => setPesoKg(Number(e.target.value))}
-                />
-                <TextField
-                    fullWidth
-                    margin="dense"
-                    label="Precio"
-                    type="number"
-                    value={precio}
-                    onChange={(e) => setPrecio(Number(e.target.value))}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={props.onClose}>Cancelar</Button>
-                <Button onClick={crear} variant="contained">Crear</Button>
-            </DialogActions>
+        <Dialog
+            open={props.open}
+            onOpenChange={(_, data) => { if (!data.open) props.onClose(); }}
+        >
+            <DialogSurface>
+                <DialogBody>
+                    <DialogTitle>Nuevo producto</DialogTitle>
+                    <DialogContent className={styles.content}>
+                        <Field label="Descripción">
+                            <Input
+                                autoFocus
+                                value={descripcion}
+                                onChange={(e) => setDescripcion(e.target.value)}
+                            />
+                        </Field>
+                        <Field label="Peso (kg)">
+                            <Input
+                                type="number"
+                                value={String(pesoKg)}
+                                onChange={(e) => setPesoKg(Number(e.target.value))}
+                                onFocus={(e) => e.target.select()}
+                                input={{ className: styles.noSpinner }}
+                            />
+                        </Field>
+                        <Field label="Precio">
+                            <Input
+                                type="number"
+                                value={String(precio)}
+                                onChange={(e) => setPrecio(Number(e.target.value))}
+                                onFocus={(e) => e.target.select()}
+                                input={{ className: styles.noSpinner }}
+                            />
+                        </Field>
+                        <Field label="Categoría">
+                            <Dropdown
+                                value={CATEGORIAS_NUTRICIONALES.find(c => c.value === categoria)?.label}
+                                selectedOptions={[categoria]}
+                                onOptionSelect={(_, data) => {
+                                    if (data.optionValue) setCategoria(data.optionValue as CategoriaNutricional);
+                                }}
+                            >
+                                {CATEGORIAS_NUTRICIONALES.map(c => (
+                                    <Option key={c.value} value={c.value}>{c.label}</Option>
+                                ))}
+                            </Dropdown>
+                        </Field>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button appearance="secondary" onClick={props.onClose}>Cancelar</Button>
+                        <Button appearance="primary" onClick={crear}>Crear</Button>
+                    </DialogActions>
+                </DialogBody>
+            </DialogSurface>
         </Dialog>
     );
 }

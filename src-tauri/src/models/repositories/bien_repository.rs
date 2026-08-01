@@ -13,4 +13,10 @@ pub trait  BienRepository{
 pub enum BienRepositoryError{
     #[error(transparent)]
     DataBase(#[from] sqlx::Error),
+
+    #[error("no se puede eliminar: el producto todavía tiene stock")]
+    TieneStock,
+
+    #[error("no se puede eliminar: el producto tiene entregas registradas")]
+    TieneEntregas,
 }

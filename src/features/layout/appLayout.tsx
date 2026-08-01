@@ -1,131 +1,181 @@
 import { useState } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
+import { Button, Text, Caption1, makeStyles, tokens, mergeClasses } from "@fluentui/react-components";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import LogoutIcon from "@mui/icons-material/Logout";
+import {
+  VehicleTruckRegular,
+  BoxRegular,
+  BriefcaseMedicalRegular,
+  ArrowDownloadRegular,
+  SignOutRegular,
+} from "@fluentui/react-icons";
 
-const COLLAPSED_WIDTH = 50;
-const EXPANDED_WIDTH = 240;
+const COLLAPSED_WIDTH = "50px";
+const EXPANDED_WIDTH = "240px";
 const SIDEBAR_BG = "#1D2935";
 const SIDEBAR_SELECTED_ICON = "#759FBD";
 
 const menuItems = [
-    { label: "Nueva Entrega", to: "/entregas", icon: <LocalShippingIcon /> },
-    { label: "Inventario", to: "/stock", icon: <InventoryIcon /> },
-    { label: "Clínicas", to: "/clinicas", icon: <LocalHospitalIcon /> },
+  { label: "Nueva Entrega", to: "/entregas", icon: <VehicleTruckRegular /> },
+  { label: "Inventario", to: "/stock", icon: <BoxRegular /> },
+  { label: "Clínicas", to: "/clinicas", icon: <BriefcaseMedicalRegular /> },
+  { label: "Entradas", to: "/entradas", icon: <ArrowDownloadRegular /> },
 ];
 
+const useStyles = makeStyles({
+  root: {
+    display: "flex",
+    height: "100vh",
+  },
+  sidebar: {
+    display: "flex",
+    flexDirection: "column",
+    flexShrink: 0,
+    overflowX: "hidden",
+    backgroundColor: SIDEBAR_BG,
+    color: "rgba(255,255,255,0.87)",
+    transitionProperty: "width",
+    transitionDuration: tokens.durationNormal,
+    transitionTimingFunction: tokens.curveEasyEase,
+  },
+  collapsed: {
+    width: COLLAPSED_WIDTH,
+  },
+  expanded: {
+    width: EXPANDED_WIDTH,
+  },
+  brand: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+    padding: `${tokens.spacingVerticalM} ${tokens.spacingHorizontalM}`,
+    whiteSpace: "nowrap",
+  },
+  logo: {
+    width: "32px",
+    height: "32px",
+    flexShrink: 0,
+  },
+  brandText: {
+    overflow: "hidden",
+  },
+  brandTitle: {
+    color: "white",
+    fontWeight: tokens.fontWeightBold,
+    lineHeight: "1.2",
+    display: "block",
+  },
+  brandSubtitle: {
+    color: "rgba(255,255,255,0.6)",
+    lineHeight: "1",
+    display: "block",
+  },
+  nav: {
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 1,
+    gap: tokens.spacingVerticalXS,
+    padding: `0 ${tokens.spacingHorizontalXS}`,
+  },
+  navItem: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+    whiteSpace: "nowrap",
+    color: "rgba(255,255,255,0.87)",
+    backgroundColor: "transparent",
+    border: "none",
+  },
+  navLink: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalM,
+    whiteSpace: "nowrap",
+    color: "rgba(255,255,255,0.87)",
+    textDecoration: "none",
+    borderRadius: tokens.borderRadiusMedium,
+    padding: `${tokens.spacingVerticalSNudge} ${tokens.spacingHorizontalM}`,
+    fontSize: tokens.fontSizeBase300,
+    fontFamily: tokens.fontFamilyBase,
+    ":hover": {
+      backgroundColor: "rgba(255,255,255,0.08)",
+    },
+  },
+  navItemSelected: {
+    color: SIDEBAR_SELECTED_ICON,
+  },
+  footer: {
+    padding: `0 ${tokens.spacingHorizontalXS}`,
+    paddingBottom: tokens.spacingVerticalM,
+  },
+  main: {
+    flexGrow: 1,
+    padding: tokens.spacingHorizontalXXL,
+    overflowY: "auto",
+  },
+});
+
 function AppLayout() {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const { pathname } = useLocation();
+  const styles = useStyles();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { pathname } = useLocation();
 
-    const handleLogout = async () => {
-        const loginWindow = await WebviewWindow.getByLabel("login");
-        await loginWindow?.show();
-        await getCurrentWindow().hide();
-    };
+  const handleLogout = async () => {
+    const loginWindow = await WebviewWindow.getByLabel("login");
+    await loginWindow?.show();
+    await getCurrentWindow().hide();
+  };
 
-    return (
-        <Box sx={{ display: "flex" }}>
-            <Drawer
-                variant="permanent"
-                onMouseEnter={() => setIsExpanded(true)}
-                onMouseLeave={() => setIsExpanded(false)}
-                sx={{
-                    width: isExpanded ? EXPANDED_WIDTH : COLLAPSED_WIDTH,
-                    flexShrink: 0,
-                    transition: (theme) =>
-                        theme.transitions.create("width", {
-                            easing: theme.transitions.easing.sharp,
-                            duration: theme.transitions.duration.enteringScreen,
-                        }),
-                    "& .MuiDrawer-paper": {
-                        width: isExpanded ? EXPANDED_WIDTH : COLLAPSED_WIDTH,
-                        overflowX: "hidden",
-                        boxSizing: "border-box",
-                        display: "flex",
-                        flexDirection: "column",
-                        bgcolor: SIDEBAR_BG,
-                        color: "rgba(255,255,255,0.87)",
-                        transition: (theme) =>
-                            theme.transitions.create("width", {
-                                easing: theme.transitions.easing.sharp,
-                                duration: theme.transitions.duration.enteringScreen,
-                            }),
-                        "& .MuiListItemIcon-root": {
-                            color: "rgba(255,255,255,0.6)"
-                        },
-                        "& .Mui-selected, & .Mui-selected:hover": {
-                            bgcolor: "transparent !important",
-                        },
-                        "& .Mui-selected .MuiListItemIcon-root": {
-                            color: SIDEBAR_SELECTED_ICON,
-                        },
-                    },
-                }}
+  return (
+    <div className={styles.root}>
+      <div
+        className={mergeClasses(styles.sidebar, isExpanded ? styles.expanded : styles.collapsed)}
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
+      >
+        <div className={styles.brand}>
+          <img src="/logoVairesMedical.png" alt="Logo NutriStock" className={styles.logo} />
+          <div className={styles.brandText}>
+            <Text className={styles.brandTitle}>NutriStock</Text>
+            <Caption1 className={styles.brandSubtitle}>Gestión &amp; Facturación</Caption1>
+          </div>
+        </div>
+
+        <nav className={styles.nav}>
+          {menuItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={mergeClasses(
+                styles.navLink,
+                pathname === item.to && styles.navItemSelected,
+              )}
             >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, px: 1.5, py: 2, whiteSpace: "nowrap" }}>
-                    <Box
-                        component="img"
-                        src="/logoVairesMedical.png"
-                        alt="Logo NutriStock"
-                        sx={{ width: 32, height: 32, flexShrink: 0 }}
-                    />
-                    <Box sx={{ overflow: "hidden" }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
-                            NutriStock
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.6)", lineHeight: 1 }}>
-                            Gestión &amp; Facturación
-                        </Typography>
-                    </Box>
-                </Box>
+              {item.icon}
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
 
-                <List sx={{ flexGrow: 1 }}>
-                    {menuItems.map((item) => (
-                        <ListItemButton
-                            key={item.to}
-                            component={NavLink}
-                            to={item.to}
-                            selected={pathname === item.to}
-                            onClick={(e) => e.currentTarget.blur()}
-                            sx={{
-                                whiteSpace: "nowrap",
-                                borderRadius: 3
-                            }}
-                        >
+        <div className={styles.footer}>
+          <Button
+            appearance="subtle"
+            icon={<SignOutRegular />}
+            className={styles.navItem}
+            onClick={handleLogout}
+          >
+            Cerrar sesión
+          </Button>
+        </div>
+      </div>
 
-                            <ListItemIcon>{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.label} />
-                        </ListItemButton>
-                    ))}
-                </List>
-
-                <List>
-                    <ListItemButton
-                        onClick={(e) => {
-                            e.currentTarget.blur();
-                            handleLogout();
-                        }}
-                        sx={{ whiteSpace: "nowrap" }}
-                    >
-                        <ListItemIcon>
-                            <LogoutIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Cerrar sesión" />
-                    </ListItemButton>
-                </List>
-            </Drawer>
-
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Outlet />
-            </Box>
-        </Box>
-    );
+      <main className={styles.main}>
+        <Outlet />
+      </main>
+    </div>
+  );
 }
 
 export default AppLayout;

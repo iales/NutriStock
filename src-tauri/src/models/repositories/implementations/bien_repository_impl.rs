@@ -15,7 +15,8 @@ impl BienRepositoryImpl{
 /// SQL (el nombre de las columnas seleccionadas debe matchear los campos de Bien).
 pub(crate) const BIEN_SELECT_AGREGADO: &str = "
     SELECT b.id, b.descripcion, b.peso_kg, b.precio_centavos, b.categoria_nutricional,
-           COALESCE(SUM(lb.cantidad), 0) AS stock_actual
+           COALESCE(SUM(lb.cantidad), 0) AS stock_actual,
+           MIN(CASE WHEN lb.cantidad > 0 THEN lb.vencimiento END) AS proximo_vencimiento
     FROM bien b
     LEFT JOIN lote_bien lb ON lb.bien_id = b.id
 ";
@@ -61,11 +62,34 @@ impl BienRepository for BienRepositoryImpl{
     }
 
     async fn delete(&self, bien_id: i64) -> Result<bool, BienRepositoryError> {
-        let resultado = sqlx::query("DELETE FROM bien WHERE id = ?")
+        let mut transaction = self.pool.begin().await?;
+
+        let stock_actual: i64 = sqlx::query_scalar
+            ("SELECT COALESCE(SUM(cantidad), 0) FROM lote_bien WHERE bien_id = ?")
             .bind(bien_id)
-            .execute(&self.pool)
+            .fetch_one(&mut *transaction)
             .await?;
 
+        if stock_actual > 0 {
+            return Err(BienRepositoryError::TieneStock);
+        }
+
+        // stock en 0 => son solo lotes vacíos (historial), se limpian para poder borrar el bien.
+        sqlx::query("DELETE FROM lote_bien WHERE bien_id = ?")
+            .bind(bien_id)
+            .execute(&mut *transaction)
+            .await?;
+
+        let resultado = sqlx::query("DELETE FROM bien WHERE id = ?")
+            .bind(bien_id)
+            .execute(&mut *transaction)
+            .await
+            .map_err(|e| match &e {
+                sqlx::Error::Database(db_err) if db_err.is_foreign_key_violation() => BienRepositoryError::TieneEntregas,
+                _ => BienRepositoryError::DataBase(e),
+            })?;
+
+        transaction.commit().await?;
         Ok(resultado.rows_affected() > 0)
     }
 

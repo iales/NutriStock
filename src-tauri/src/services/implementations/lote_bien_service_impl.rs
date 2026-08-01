@@ -23,9 +23,12 @@ impl<LR: LoteBienRepository + Sync, BS: BienService + Sync> LoteBienService for 
         self.bien_service.find_by_id(request.bien_id).await?
             .ok_or(LoteBienServiceError::NotFoundBien(request.bien_id))?;
 
-        Ok(self.lote_repo
-            .crear(LoteBien::new(request.bien_id, request.cantidad, request.vencimiento))
-            .await?)
+        match request.vencimiento {
+            Some(vencimiento) => Ok(self.lote_repo
+                .crear(LoteBien::new(request.bien_id, request.cantidad, Some(vencimiento)))
+                .await?),
+            None => Ok(self.lote_repo.agregar_manual(request.bien_id, request.cantidad).await?),
+        }
     }
 
     async fn listar_por_bien(&self, bien_id: i64) -> Result<Vec<LoteBien>, LoteBienServiceError> {
