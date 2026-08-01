@@ -1,12 +1,11 @@
-import { Typography } from "@mui/material";
+import { Title2 } from "@fluentui/react-components";
 
-function NuevaEntrega(){
-    return(
+function NuevaEntrega() {
+    return (
         <>
-            <Typography variant="h4"> Entregas </Typography>
+            <Title2>Entregas</Title2>
         </>
-    ); 
-    
-}  
+    );
+}
 
 export default NuevaEntrega;

@@ -1,12 +1,11 @@
-import { Typography } from "@mui/material";
+import { Title2 } from "@fluentui/react-components";
 
-function GestionClinicas(){
-    return(
+function GestionClinicas() {
+    return (
         <>
-            <Typography variant="h4"> Clinicas </Typography>
+            <Title2>Clínicas</Title2>
         </>
-    ); 
-    
-}  
+    );
+}
 
 export default GestionClinicas;

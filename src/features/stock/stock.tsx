@@ -1,12 +1,31 @@
-import {Container, Button, TextField} from "@mui/material";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { invoke } from '@tauri-apps/api/core';
+import { Button, Input, makeStyles, tokens } from "@fluentui/react-components";
+import { AddRegular } from "@fluentui/react-icons";
 import { Bien } from "../../types/bien";
 import BienComponent from "../../components/bienComponent/bienComponent";
 import CreateBienPopUp from "../../components/popups/createBienPopUp";
-import AddIcon from '@mui/icons-material/Add';
+
+const useStyles = makeStyles({
+    container: {
+        maxWidth: "1100px",
+        marginLeft: "auto",
+        marginRight: "auto",
+    },
+    header: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: tokens.spacingVerticalM,
+    },
+    search: {
+        minWidth: "500px",
+        boxShadow: tokens.shadow8,
+    },
+});
 
 function ControlStock(){
+    const styles = useStyles();
     const [bienes, setBienes] = useState<Bien[]>([]);
     const [, setCargando] = useState(true);
     const [creandoProducto, setCreandoProducto] = useState(false);
@@ -20,8 +39,6 @@ function ControlStock(){
         b.descripcion.toLowerCase().includes(busqueda.toLowerCase())
     );
 
-
-
     useEffect(() => {
         const cargarBienes = async () => {
             try {
@@ -31,33 +48,34 @@ function ControlStock(){
                 setCargando(false);
             }
         };
-    cargarBienes();
-    } , []);
-        
+        cargarBienes();
+    }, []);
+
     const updateHandler = (updatedBien: Bien) => {
         setBienes(prev => prev.map(b => (b.id === updatedBien.id ? updatedBien : b)));
     }
     const deletedHandler = (id_bien: Number) => {
         setBienes(prev => prev.filter(b => b.id !== id_bien));
     }
-    return(
+
+    return (
         <>
-            <Container sx={{display: 'flex', justifyContent: 'space-between'}}>
-                <TextField
-                    size="small"
-                    placeholder="Buscar pruducto"
+            <div className={`${styles.container} ${styles.header}`}>
+                <Input
+                    size="medium"
+                    placeholder="Buscar producto"
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
-                    sx={{ minWidth: 500, boxShadow: 5 }}
+                    className={styles.search}
                 />
                 <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
+                    appearance="primary"
+                    icon={<AddRegular />}
                     onClick={() => setCreandoProducto(true)}
                 >
                     Nuevo producto
                 </Button>
-            </Container>
+            </div>
 
             <CreateBienPopUp
                 open={creandoProducto}
@@ -65,17 +83,16 @@ function ControlStock(){
                 onCreado={creadoHandler}
             />
 
-            <Container>
+            <div className={styles.container}>
                 {bienesFiltrados.map(bien => <BienComponent
                     key={bien.id}
                     bien={bien}
                     onActualizado={updateHandler}
                     onEliminado={deletedHandler}
                 />)}
-            </Container>
+            </div>
         </>
-    ); 
-    
-}  
+    );
+}
 
 export default ControlStock;
