@@ -17,7 +17,7 @@ const SIDEBAR_BG = "#1D2935";
 const SIDEBAR_SELECTED_ICON = "#759FBD";
 
 const menuItems = [
-  { label: "Nueva Entrega", to: "/entregas", icon: <VehicleTruckRegular /> },
+  { label: "Entregas", to: "/entregas", icon: <VehicleTruckRegular /> },
   { label: "Inventario", to: "/stock", icon: <BoxRegular /> },
   { label: "Clínicas", to: "/clinicas", icon: <BriefcaseMedicalRegular /> },
   { label: "Entradas", to: "/entradas", icon: <ArrowDownloadRegular /> },

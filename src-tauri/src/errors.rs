@@ -5,6 +5,7 @@ use crate::services::bien_service::BienServiceError;
 use crate::services::lote_bien_service::LoteBienServiceError;
 use crate::services::entrega_service::EntregaServiceError;
 use crate::services::autorizacion_remito_service::AutorizacionRemitoServiceError;
+use crate::services::datos_empresa_service::DatosEmpresaServiceError;
 
 #[derive(Debug, Error)]
 pub enum AppError{
@@ -24,7 +25,10 @@ pub enum AppError{
     Entrega(#[from] EntregaServiceError),
 
     #[error(transparent)]
-    AutorizacionRemito(#[from] AutorizacionRemitoServiceError)
+    AutorizacionRemito(#[from] AutorizacionRemitoServiceError),
+
+    #[error(transparent)]
+    DatosEmpresa(#[from] DatosEmpresaServiceError)
 }
 
 impl AppError {
@@ -64,6 +68,10 @@ impl AppError {
                 AutorizacionRemitoServiceError::AutorizacionRemitoRepository(_) => "AutorizacionRemitoRepository",
                 AutorizacionRemitoServiceError::EntregaRepository(_) => "EntregaRepository",
                 AutorizacionRemitoServiceError::RangoInvalido => "RangoInvalido",
+            },
+            AppError::DatosEmpresa(err) => match err {
+                DatosEmpresaServiceError::DatosEmpresaRepository(_) => "DatosEmpresaRepository",
+                DatosEmpresaServiceError::VoidField => "CamposVacios",
             }
 
         }

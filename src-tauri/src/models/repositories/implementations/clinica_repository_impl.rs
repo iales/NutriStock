@@ -65,4 +65,17 @@ impl ClinicaRepository for ClinicaRepositoryImpl{
         Ok(clinica)
     }
 
+    async fn delete(&self, clinica_id: i64) -> Result<bool, ClinicaRepositoryError> {
+        let resultado = sqlx::query("DELETE FROM clinica WHERE id = ?")
+            .bind(clinica_id)
+            .execute(&self.pool)
+            .await
+            .map_err(|e| match &e {
+                sqlx::Error::Database(db_err) if db_err.is_foreign_key_violation() => ClinicaRepositoryError::TieneEntregas,
+                _ => ClinicaRepositoryError::DataBase(e),
+            })?;
+
+        Ok(resultado.rows_affected() > 0)
+    }
+
 }

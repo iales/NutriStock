@@ -4,3 +4,4 @@ pub mod lote_bien_command;
 pub mod clinica_comand;
 pub mod entrega_command;
 pub mod autorizacion_remito_command;
+pub mod datos_empresa_command;

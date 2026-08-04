@@ -40,12 +40,21 @@ impl<R: ClinicaRepository + Sync> ClinicaService for ClinicaServiceImpl<R>{
         Ok(self.repo.find_all().await?)
     }
 
-    async fn update_clinica(&self, clinica_id: i64, request: ClinicaUpdateRequest) 
+    async fn update_clinica(&self, clinica_id: i64, request: ClinicaUpdateRequest)
      -> Result<Option<Clinica>, ClinicaServiceError> {
         validar_update_request(&request)?;
 
         Ok(self.repo.update(clinica_id, request).await?)
-    }  
+    }
+
+    async fn eliminar_clinica(&self, clinica_id: i64) -> Result<(), ClinicaServiceError> {
+        let borrada = self.repo.delete(clinica_id).await?;
+        if borrada {
+            Ok(())
+        } else {
+            Err(ClinicaServiceError::ClinicaNotFound(clinica_id))
+        }
+    }
 }
 
 

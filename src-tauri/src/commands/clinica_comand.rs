@@ -36,6 +36,14 @@ pub async fn update_clinica_command(
     Ok(clinica_service(pool.inner()).update_clinica(id, request).await?)
 }
 
+#[tauri::command]
+pub async fn eliminar_clinica_command(
+    pool: tauri::State<'_, sqlx::SqlitePool>,
+    id: i64
+) -> Result<(), AppError>{
+    Ok(clinica_service(pool.inner()).eliminar_clinica(id).await?)
+}
+
 
 fn clinica_service(pool: &sqlx::SqlitePool) -> impl ClinicaService{
     let repo = ClinicaRepositoryImpl::new(pool.clone());

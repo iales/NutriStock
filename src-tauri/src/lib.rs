@@ -14,7 +14,8 @@ use crate::commands::lote_bien_command::{
 use tauri::Manager;
 
 use crate::commands::clinica_comand::{
-    find_clinica_by_id_command, registrar_nueva_clinica_command, listar_clinicas_command, update_clinica_command
+    find_clinica_by_id_command, registrar_nueva_clinica_command, listar_clinicas_command, update_clinica_command,
+    eliminar_clinica_command,
 };
 
 use crate::commands::entrega_command::{
@@ -23,6 +24,10 @@ use crate::commands::entrega_command::{
 
 use crate::commands::autorizacion_remito_command::{
     registrar_autorizacion_remito_command, listar_autorizaciones_remito_command, sugerir_numero_remito_command,
+};
+
+use crate::commands::datos_empresa_command::{
+    guardar_datos_empresa_command, obtener_datos_empresa_command,
 };
 
 fn init_db_pool(app: &tauri::App) -> Result<sqlx::SqlitePool, Box<dyn std::error::Error>> {
@@ -64,12 +69,15 @@ pub fn run() {
             registrar_nueva_clinica_command, 
             listar_clinicas_command,
             update_clinica_command,
+            eliminar_clinica_command,
             crear_entrega_command,
             find_entrega_by_id_command,
             listar_entregas_command,
             registrar_autorizacion_remito_command,
             listar_autorizaciones_remito_command,
-            sugerir_numero_remito_command
+            sugerir_numero_remito_command,
+            guardar_datos_empresa_command,
+            obtener_datos_empresa_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
