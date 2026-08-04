@@ -55,7 +55,7 @@ async fn crear_entrega_descuenta_stock_y_devuelve_id() {
     let bien = crear_bien_de_prueba(&pool, 10).await;
 
     let item = ItemBien::new(bien.clone(), 3, bien.precio_centavos);
-    let entrega = Entrega::new(None, clinica, vec![item], chrono::Local::now().naive_local(), Some("Contado".into()));
+    let entrega = Entrega::new(None, clinica, vec![item], chrono::Local::now().naive_local(), Some("Contado".into()), None, None);
 
     let repo = EntregaRepositoryImpl::new(pool.clone());
     let creada = repo.crear(entrega).await.expect("crear() no debería fallar con stock suficiente");
@@ -78,7 +78,7 @@ async fn crear_entrega_con_stock_insuficiente_no_persiste_nada() {
     let bien = crear_bien_de_prueba(&pool, 2).await;
 
     let item = ItemBien::new(bien.clone(), 5, bien.precio_centavos);
-    let entrega = Entrega::new(None, clinica, vec![item], chrono::Local::now().naive_local(), Some("Contado".into()));
+    let entrega = Entrega::new(None, clinica, vec![item], chrono::Local::now().naive_local(), Some("Contado".into()), None, None);
 
     let repo = EntregaRepositoryImpl::new(pool.clone());
     let resultado = repo.crear(entrega).await;
@@ -108,7 +108,7 @@ async fn find_by_id_reconstruye_la_entrega_completa() {
     let bien = crear_bien_de_prueba(&pool, 10).await;
 
     let item = ItemBien::new(bien.clone(), 4, bien.precio_centavos);
-    let entrega = Entrega::new(None, clinica.clone(), vec![item], chrono::Local::now().naive_local(), Some("e-cheq. 30 dias".into()));
+    let entrega = Entrega::new(None, clinica.clone(), vec![item], chrono::Local::now().naive_local(), Some("e-cheq. 30 dias".into()), None, None);
 
     let repo = EntregaRepositoryImpl::new(pool.clone());
     let creada = repo.crear(entrega).await.expect("crear() no debería fallar");

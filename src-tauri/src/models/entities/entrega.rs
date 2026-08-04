@@ -8,6 +8,8 @@ pub struct Entrega{
     pub items: Vec<ItemBien>,
     pub fecha: chrono::NaiveDateTime,
     pub condicion_venta: Option<String>,
+    pub remito_punto_venta: Option<i64>,
+    pub remito_numero: Option<i64>
 }
 
 impl Entrega{
@@ -17,13 +19,17 @@ impl Entrega{
         items: Vec<ItemBien>,
         fecha: chrono::NaiveDateTime,
         condicion_venta: Option<String>,
+        remito_punto_venta: Option<i64>,
+        remito_numero: Option<i64>
      ) -> Self{
         Self { 
             id,
             clinica,
             items,
             fecha,
-            condicion_venta
+            condicion_venta,
+            remito_punto_venta,
+            remito_numero,
         }
      }
 
@@ -39,4 +45,10 @@ impl Entrega{
 
 
 #[derive(Debug, serde::Deserialize)]
-pub struct EntregaCreateRequest{ pub clinica_id: i64, pub  items: Vec<ItemBienRequest>, pub condicion_venta: Option<String> }
+pub struct EntregaCreateRequest{
+    pub clinica_id: i64, 
+    pub  items: Vec<ItemBienRequest>, 
+    pub condicion_venta: Option<String>,
+    pub remito_punto_venta: Option<i64>,
+    pub remito_numero: Option<i64>
+}

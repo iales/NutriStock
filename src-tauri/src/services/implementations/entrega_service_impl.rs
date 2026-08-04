@@ -26,6 +26,9 @@ impl <ER: EntregaRepository + Sync, BR: BienService + Sync, CR: ClinicaService +
             let clinica = self.clinica_service.find_by_id(request.clinica_id).await?
                 .ok_or_else(|| ClinicaServiceError::ClinicaNotFound(request.clinica_id))?;
             
+            if request.remito_punto_venta.is_some() != request.remito_numero.is_some() {
+                return Err(EntregaServiceError::RemitoIncompleto);
+            }
             let mut items: Vec<ItemBien> = Vec::new();
             for item in request.items{
                 let bien= self.bien_service.find_by_id(item.bien_id).await?.
@@ -41,7 +44,15 @@ impl <ER: EntregaRepository + Sync, BR: BienService + Sync, CR: ClinicaService +
                  ));
             }
 
-            let entrega= Entrega::new(None, clinica, items, chrono::Local::now().naive_local(), request.condicion_venta);
+
+            let entrega= Entrega::new(None,
+                clinica,
+                items,
+                chrono::Local::now().naive_local(), 
+                request.condicion_venta,
+                request.remito_punto_venta,
+                request.remito_numero
+            );
             Ok(self.entrega_repo.crear(entrega).await?)
         }
 

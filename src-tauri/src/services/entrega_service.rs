@@ -18,6 +18,9 @@ pub enum EntregaServiceError{
     
     #[error(transparent)]
     ClinicaServiceError(#[from] ClinicaServiceError),
+
+    #[error("Faltan datos para poder generar el remito")]
+    RemitoIncompleto
 }    
 
 pub trait EntregaService{

@@ -21,6 +21,10 @@ use crate::commands::entrega_command::{
     crear_entrega_command, find_entrega_by_id_command, listar_entregas_command,
 };
 
+use crate::commands::autorizacion_remito_command::{
+    registrar_autorizacion_remito_command, listar_autorizaciones_remito_command, sugerir_numero_remito_command,
+};
+
 fn init_db_pool(app: &tauri::App) -> Result<sqlx::SqlitePool, Box<dyn std::error::Error>> {
     let app_data_dir = app.path().app_data_dir()?;
     std::fs::create_dir_all(&app_data_dir)?;
@@ -62,7 +66,10 @@ pub fn run() {
             update_clinica_command,
             crear_entrega_command,
             find_entrega_by_id_command,
-            listar_entregas_command
+            listar_entregas_command,
+            registrar_autorizacion_remito_command,
+            listar_autorizaciones_remito_command,
+            sugerir_numero_remito_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

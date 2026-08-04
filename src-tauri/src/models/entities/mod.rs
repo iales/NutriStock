@@ -4,3 +4,4 @@ pub mod lote_bien;
 pub mod item_bien;
 pub mod clinica;
 pub mod entrega; 
+pub mod autorizacion_remito;

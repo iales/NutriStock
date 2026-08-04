@@ -4,6 +4,7 @@ use crate::services::service_login::LoginServiceError;
 use crate::services::bien_service::BienServiceError;
 use crate::services::lote_bien_service::LoteBienServiceError;
 use crate::services::entrega_service::EntregaServiceError;
+use crate::services::autorizacion_remito_service::AutorizacionRemitoServiceError;
 
 #[derive(Debug, Error)]
 pub enum AppError{
@@ -20,7 +21,10 @@ pub enum AppError{
     Clinica(#[from] ClinicaServiceError),
 
     #[error(transparent)]
-    Entrega(#[from] EntregaServiceError)
+    Entrega(#[from] EntregaServiceError),
+
+    #[error(transparent)]
+    AutorizacionRemito(#[from] AutorizacionRemitoServiceError)
 }
 
 impl AppError {
@@ -54,6 +58,12 @@ impl AppError {
                 EntregaServiceError::BienServiceError(_) => "BienService",
                 EntregaServiceError::EntregaNotFound(_) => "EntregaNoEncontrada",
                 EntregaServiceError::ClinicaServiceError(_) => "ClinicaService",
+                EntregaServiceError::RemitoIncompleto => "EntregaService",
+            },
+            AppError::AutorizacionRemito(err) => match err {
+                AutorizacionRemitoServiceError::AutorizacionRemitoRepository(_) => "AutorizacionRemitoRepository",
+                AutorizacionRemitoServiceError::EntregaRepository(_) => "EntregaRepository",
+                AutorizacionRemitoServiceError::RangoInvalido => "RangoInvalido",
             }
 
         }

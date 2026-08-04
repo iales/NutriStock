@@ -22,11 +22,13 @@ impl EntregaRepository for EntregaRepositoryImpl{
         let mut transaction = self.pool.begin().await?;
          
          let entrega_id: i64 = sqlx::query_scalar(
-            "INSERT INTO entrega (clinica_id, fecha, condicion_venta) VALUES (?, ?,?) RETURNING id"
+            "INSERT INTO entrega (clinica_id, fecha, condicion_venta, remito_punto_venta, remito_numero) VALUES (?, ?, ?, ?, ?) RETURNING id"
         )
         .bind(entrega.clinica.id)
         .bind(entrega.fecha)
         .bind(entrega.condicion_venta.clone())
+        .bind(entrega.remito_punto_venta)
+        .bind(entrega.remito_numero)
         .fetch_one(&mut *transaction)
         .await?;
 
@@ -90,7 +92,16 @@ impl EntregaRepository for EntregaRepositoryImpl{
         
         
 
-        Ok(Some(Entrega::new(Some(entrega_row.id) ,clinica, items, entrega_row.fecha, entrega_row.condicion_venta)))
+        Ok(Some(Entrega::new(
+            Some(entrega_row.id),
+            clinica,
+            items,
+            entrega_row.fecha,
+            entrega_row.condicion_venta,
+            entrega_row.remito_punto_venta,
+            entrega_row.remito_numero,
+        )))
+
     }
 
     async fn listar_entregas(&self) 
@@ -126,10 +137,29 @@ impl EntregaRepository for EntregaRepositoryImpl{
                 .fetch_one(&self.pool)
                 .await?;
 
-            entregas.push(Entrega::new(Some(entrega_row.id) ,clinica, items, entrega_row.fecha, entrega_row.condicion_venta));
+            entregas.push(Entrega::new(
+                Some(entrega_row.id),
+                clinica,
+                items,
+                entrega_row.fecha,
+                entrega_row.condicion_venta,
+                entrega_row.remito_punto_venta,
+                entrega_row.remito_numero,
+            ));
         }
 
         Ok(entregas)
+    }
+    async fn max_remito_numero(&self, punto_venta: i64, numero_desde: i64, numero_hasta: i64)
+      -> Result<Option<i64>, EntregaRepositoryError> {
+        Ok(sqlx::query_scalar
+            ("SELECT MAX(remito_numero) FROM entrega WHERE remito_punto_venta = ? AND remito_numero >= ? AND remito_numero <= ?")
+            .bind(punto_venta)
+            .bind(numero_desde)
+            .bind(numero_hasta)
+            .fetch_one(&self.pool)
+            .await?
+        )
     }
 }
 
@@ -139,7 +169,9 @@ struct EntregaRow {
     id: i64,
     clinica_id: i64,
     fecha: chrono::NaiveDateTime,
-    condicion_venta: Option<String>
+    condicion_venta: Option<String>,
+    remito_punto_venta: Option<i64>,
+    remito_numero: Option<i64>,
 }
 
 #[derive(sqlx::FromRow)]
