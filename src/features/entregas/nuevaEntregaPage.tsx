@@ -243,7 +243,7 @@ function NuevaEntregaPage() {
     const filasValidas = items.filter(fila => fila.bien !== null && fila.cantidad > 0);
 
     const totalCentavos = filasValidas.reduce((acc, fila) => {
-        const precio = fila.precioOverride || fila.bien!.precio_centavos;
+        const precio = fila.precioOverride > 0 ? Math.round(fila.precioOverride * 100) : fila.bien!.precio_centavos;
         return acc + precio * fila.cantidad;
     }, 0);
 
@@ -273,7 +273,7 @@ function NuevaEntregaPage() {
                     items: filasValidas.map(fila => ({
                         bien_id: fila.bien!.id,
                         cantidad: fila.cantidad,
-                        precio_unitario_centavos: fila.precioOverride || null,
+                        precio_unitario_centavos: fila.precioOverride > 0 ? Math.round(fila.precioOverride * 100) : null,
                     })),
                     condicion_venta: condicionVenta || null,
                     remito_punto_venta: remitoPuntoVenta ? Number(remitoPuntoVenta) : null,
@@ -435,6 +435,7 @@ function NuevaEntregaPage() {
                                     <Field label="Precio (opcional)" className={styles.itemPrecio}>
                                         <Input
                                             type="number"
+                                            contentBefore="$"
                                             value={String(fila.precioOverride)}
                                             onChange={(e) => actualizarFila(fila.key, { precioOverride: Number(e.target.value) })}
                                             onFocus={(e) => e.target.select()}
