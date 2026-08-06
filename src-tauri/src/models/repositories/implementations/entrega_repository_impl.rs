@@ -21,7 +21,7 @@ impl EntregaRepository for EntregaRepositoryImpl{
     -> Result<Entrega, EntregaRepositoryError>  {
         let mut transaction = self.pool.begin().await?;
          
-         let entrega_id: i64 = sqlx::query_scalar(
+        let entrega_id: i64 = sqlx::query_scalar(
             "INSERT INTO entrega (clinica_id, fecha, condicion_venta, remito_punto_venta, remito_numero) VALUES (?, ?, ?, ?, ?) RETURNING id"
         )
         .bind(entrega.clinica.id)
