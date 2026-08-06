@@ -26,3 +26,8 @@ dist-ssr
 #myFiles
 *.env
 .target/*
+
+# Claude Code tooling (not app code)
+.claude/
+.impeccable/
+skills-lock.json
