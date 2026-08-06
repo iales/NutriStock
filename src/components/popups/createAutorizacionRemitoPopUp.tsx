@@ -10,6 +10,8 @@ import {
     Input,
     MessageBar,
     MessageBarBody,
+    Text,
+    Divider,
     makeStyles,
     tokens,
 } from "@fluentui/react-components";
@@ -23,6 +25,27 @@ const useStyles = makeStyles({
         flexDirection: "column",
         gap: tokens.spacingVerticalS,
     },
+    actualCard: {
+        display: "flex",
+        flexDirection: "column",
+        gap: tokens.spacingVerticalXS,
+        padding: tokens.spacingHorizontalM,
+        borderRadius: tokens.borderRadiusMedium,
+        backgroundColor: tokens.colorNeutralBackground3,
+    },
+    actualLabel: {
+        color: tokens.colorNeutralForeground3,
+        fontSize: tokens.fontSizeBase200,
+        textTransform: "uppercase",
+        fontWeight: tokens.fontWeightSemibold,
+    },
+    actualValue: {
+        fontWeight: tokens.fontWeightSemibold,
+    },
+    actualSub: {
+        color: tokens.colorNeutralForeground3,
+        fontSize: tokens.fontSizeBase200,
+    },
     noSpinner: {
         "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
             WebkitAppearance: "none",
@@ -34,6 +57,7 @@ const useStyles = makeStyles({
 
 interface CreateAutorizacionRemitoProps {
     open: boolean;
+    autorizacionActual: AutorizacionRemito | null;
     onClose: () => void;
     onCreado: (autorizacion: AutorizacionRemito) => void;
 }
@@ -41,6 +65,11 @@ interface CreateAutorizacionRemitoProps {
 interface AppErrorShape {
     tipo: string;
     mensaje: string;
+}
+
+function formatRango(puntoVenta: number, numeroDesde: number, numeroHasta: number): string {
+    const pv = String(puntoVenta).padStart(4, "0");
+    return `${pv}-${String(numeroDesde).padStart(8, "0")} a ${pv}-${String(numeroHasta).padStart(8, "0")}`;
 }
 
 function CreateAutorizacionRemitoPopUp(props: CreateAutorizacionRemitoProps) {
@@ -92,6 +121,22 @@ function CreateAutorizacionRemitoPopUp(props: CreateAutorizacionRemitoProps) {
                 <DialogBody>
                     <DialogTitle>Registrar autorización de remitos (CAI)</DialogTitle>
                     <DialogContent className={styles.content}>
+                        {props.autorizacionActual && (
+                            <>
+                                <div className={styles.actualCard}>
+                                    <Text className={styles.actualLabel}>CAI actual</Text>
+                                    <Text className={styles.actualValue}>{props.autorizacionActual.cai}</Text>
+                                    <Text className={styles.actualSub}>
+                                        Rango {formatRango(
+                                            props.autorizacionActual.punto_venta,
+                                            props.autorizacionActual.numero_desde,
+                                            props.autorizacionActual.numero_hasta
+                                        )} · Vence el {new Date(props.autorizacionActual.vencimiento).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </Text>
+                                </div>
+                                <Divider>Registrar una nueva autorización</Divider>
+                            </>
+                        )}
                         <Field label="CAI">
                             <Input
                                 autoFocus

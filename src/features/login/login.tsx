@@ -9,7 +9,6 @@ import {
   makeStyles,
   tokens,
 } from "@fluentui/react-components";
-import { TextField } from '@fluentui/react/lib/TextField';
 import { PersonRegular, LockClosedRegular } from "@fluentui/react-icons";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -21,8 +20,11 @@ const useStyles = makeStyles({
     justifyContent: "center",
     flexDirection: "column",
     alignItems: "center",
+    minHeight: "100vh",
+    width: "100%",
+    boxSizing: "border-box",
     paddingTop: '60px',
-    backgroundImage: `linear-gradient(180deg, ${tokens.colorNeutralBackground1}, ${tokens.colorBrandBackground2})`, 
+    backgroundImage: `linear-gradient(180deg, ${tokens.colorNeutralBackground1}, ${tokens.colorBrandBackground2})`,
     gap: tokens.spacingVerticalS,
   },
   logo: {
@@ -34,7 +36,8 @@ const useStyles = makeStyles({
   field: {
     minWidth: "250px",
   },
-  divider: { 
+  divider: {
+    width: "250px",
     margin: `${tokens.spacingVerticalXS} 0`,
   },
   submit: {
