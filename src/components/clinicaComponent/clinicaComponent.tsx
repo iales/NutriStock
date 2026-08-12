@@ -1,17 +1,12 @@
 import { Clinica } from "../../types/clinica";
 import {
-    Card,
     Text,
-    Title3,
     Badge,
     Button,
-    Avatar,
-    Divider,
     makeStyles,
     tokens,
 } from "@fluentui/react-components";
 import {
-    BuildingRegular,
     LocationRegular,
     CallRegular,
     DeleteRegular,
@@ -23,23 +18,8 @@ import EditClinicaPopUp from "../popups/editClinicaPopUp";
 import { CONDICIONES_IVA } from "../popups/createClinicaPopUp";
 
 const useStyles = makeStyles({
-    card: {
-        marginTop: tokens.spacingVerticalM,
-        marginBottom: tokens.spacingVerticalM,
-        borderRadius: tokens.borderRadiusXLarge,
-    },
-    content: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "flex-start",
-        gap: tokens.spacingHorizontalM,
-        padding: tokens.spacingHorizontalM,
-    },
-    info: {
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-        gap: tokens.spacingVerticalXS,
+    cuit: {
+        color: tokens.colorNeutralForeground3,
     },
     metaRow: {
         display: "flex",
@@ -47,14 +27,14 @@ const useStyles = makeStyles({
         gap: tokens.spacingHorizontalXS,
         color: tokens.colorNeutralForeground3,
     },
-    cuit: {
+    sinDato: {
         color: tokens.colorNeutralForeground3,
+        fontStyle: "italic",
     },
-    actions: {
+    acciones: {
         display: "flex",
         justifyContent: "flex-end",
-        gap: tokens.spacingHorizontalS,
-        padding: tokens.spacingHorizontalM,
+        gap: tokens.spacingHorizontalXS,
     },
 });
 
@@ -74,49 +54,54 @@ function ClinicaComponent(props: ClinicaComponentProps) {
 
     return (
         <>
-            <Card className={styles.card}>
-                <div className={styles.content}>
-                    <Avatar icon={<BuildingRegular />} color="colorful" />
-
-                    <div className={styles.info}>
-                        <Title3>{clinica.razon_social}</Title3>
-                        <Text className={styles.cuit}>CUIT {clinica.cuit}</Text>
-                        <div className={styles.metaRow}>
-                            <LocationRegular fontSize={16} />
-                            <Text>{clinica.direccion}, {clinica.localidad}</Text>
-                        </div>
-                        {clinica.contacto && (
-                            <div className={styles.metaRow}>
-                                <CallRegular fontSize={16} />
-                                <Text>{clinica.contacto}</Text>
-                            </div>
-                        )}
+            <tr>
+                <td>
+                    <Text weight="semibold">{clinica.razon_social}</Text>
+                </td>
+                <td>
+                    <Text className={styles.cuit}>{clinica.cuit}</Text>
+                </td>
+                <td>
+                    <div className={styles.metaRow}>
+                        <LocationRegular fontSize={16} />
+                        <Text>{clinica.direccion}, {clinica.localidad}</Text>
                     </div>
-
+                </td>
+                <td>
                     <Badge appearance="tint" color="informative">{condicionIvaLabel}</Badge>
-                </div>
-
-                <Divider />
-
-                <div className={styles.actions}>
-                    <Button
-                        appearance="outline"
-                        icon={<EditRegular />}
-                        onClick={() => setConfirmandoModificar(true)}
-                    >
-                        Modificar
-                    </Button>
-
-                    <Button
-                        appearance="outline"
-                        icon={<DeleteRegular />}
-                        onClick={() => setConfirmandoEliminar(true)}
-                    >
-                        Eliminar
-                    </Button>
-                </div>
-            </Card>
-
+                </td>
+                <td>
+                    {clinica.contacto ? (
+                        <div className={styles.metaRow}>
+                            <CallRegular fontSize={16} />
+                            <Text>{clinica.contacto}</Text>
+                        </div>
+                    ) : (
+                        <Text className={styles.sinDato}>Sin contacto</Text>
+                    )}
+                </td>
+                <td>
+                    <div className={styles.acciones}>
+                        <Button
+                            appearance="outline"
+                            shape="square"
+                            icon={<EditRegular />}
+                            aria-label="Modificar clínica"
+                            title="Modificar"
+                            onClick={() => setConfirmandoModificar(true)}
+                        />
+                        <Button
+                            appearance="outline"
+                            shape="square"
+                            icon={<DeleteRegular />}
+                            aria-label="Eliminar clínica"
+                            title="Eliminar"
+                            onClick={() => setConfirmandoEliminar(true)}
+                        />
+                    </div>
+                </td>
+            </tr>
+            
             <DeleteClinicaPopUp
                 clinica={clinica}
                 open={confirmandoEliminar}
