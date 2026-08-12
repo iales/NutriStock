@@ -1,19 +1,14 @@
 import { Bien } from "../../types/bien";
 import {
-    Card,
     Text,
-    Title3,
     Badge,
     Button,
     Input,
-    Avatar,
-    Divider,
     makeStyles,
     tokens,
     mergeClasses,
 } from "@fluentui/react-components";
 import {
-    BoxRegular,
     DeleteRegular,
     AddRegular,
     SubtractRegular,
@@ -26,49 +21,17 @@ import DeletedBienPopUp from "../popups/deleteBienPopUp";
 import EditBienPopUp from "../popups/editBienPopUp";
 
 const useStyles = makeStyles({
-    card: {
-        marginTop: tokens.spacingVerticalM,
-        marginBottom: tokens.spacingVerticalM,
-        borderRadius: tokens.borderRadiusXLarge,
-    },
-    content: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "flex-start",
-        gap: tokens.spacingHorizontalM,
-        padding: tokens.spacingHorizontalM,
-    },
-    info: {
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-    },
     precio: {
         color: tokens.colorNeutralForeground3,
-    },
-    right: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-        gap: tokens.spacingVerticalXS,
-    },
-    topRow: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: tokens.spacingHorizontalM,
     },
     stockGroup: {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        gap: tokens.spacingHorizontalM,
-    },
-    stockLabel: {
-        color: tokens.colorNeutralForeground3,
+        gap: tokens.spacingHorizontalXS,
     },
     stockInput: {
-        width: "64px",
+        width: "56px",
     },
     noSpinner: {
         "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
@@ -79,7 +42,6 @@ const useStyles = makeStyles({
     },
     vencimiento: {
         color: tokens.colorNeutralForeground3,
-        fontSize: tokens.fontSizeBase200,
     },
     vencimientoWarn: {
         color: tokens.colorPaletteMarigoldForeground1,
@@ -90,24 +52,31 @@ const useStyles = makeStyles({
         fontWeight: tokens.fontWeightSemibold,
     },
     squareButton: {
-        minWidth: "32px",
+        minWidth: "28px",
     },
-    actions: {
+    acciones: {
         display: "flex",
         justifyContent: "flex-end",
-        gap: tokens.spacingHorizontalS,
-        padding: tokens.spacingHorizontalM,
+        gap: tokens.spacingHorizontalXS,
     },
 });
 
-const estadoColorMap = {
+export const estadoColorMap = {
     "Sin stock": "danger",
     "Stock bajo": "warning",
     "En stock": "success",
 } as const;
 
+export const UMBRAL_STOCK_BAJO = 5;
+
 const DIAS_URGENTE = 7;
 const DIAS_PROXIMO = 30;
+
+export function estadoBien(bien: Bien): keyof typeof estadoColorMap {
+    if (bien.stock_actual === 0) return "Sin stock";
+    if (bien.stock_actual < UMBRAL_STOCK_BAJO) return "Stock bajo";
+    return "En stock";
+}
 
 function estadoVencimiento(fechaIso: string): "danger" | "warn" | "normal" {
     const hoy = new Date();
@@ -172,115 +141,108 @@ function BienComponent(props: BienComponentProps) {
     });
 
     const { bien } = props;
-
-    let estadoTexto: keyof typeof estadoColorMap;
-    if (bien.stock_actual === 0) {
-        estadoTexto = "Sin stock";
-    } else if (bien.stock_actual < 5) {
-        estadoTexto = "Stock bajo";
-    } else {
-        estadoTexto = "En stock";
-    }
+    const estadoTexto = estadoBien(bien);
 
     return (
         <>
-            <Card className={styles.card}>
-                <div className={styles.content}>
-                    <Avatar icon={<BoxRegular />} color="colorful" />
-
-                    <div className={styles.info}>
-                        <Title3>{bien.descripcion}</Title3>
-                        <Text className={styles.precio}>{precioFormateado}</Text>
-                    </div>
-
-                    <div className={styles.right}>
-                        <div className={styles.topRow}>
-                            <Badge color={estadoColorMap[estadoTexto]} appearance="filled">
-                                {estadoTexto}
-                            </Badge>
-
-                            <div className={styles.stockGroup}>
-                                <Text className={styles.stockLabel}>En depósito:</Text>
-                                <Input
-                                    size="small"
-                                    type="number"
-                                    className={styles.stockInput}
-                                    value={String(valorEdicion)}
-                                    onChange={(e) => setValorEdicion(Number(e.target.value))}
-                                    onFocus={(e) => e.target.select()}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") guardarStock();
-                                        if (e.key === "Escape") cancelarEdicionStock();
-                                    }}
-                                    onBlur={cancelarEdicionStock}
-                                    input={{ className: styles.noSpinner }}
-                                />
-                                <Button
-                                    appearance="outline"
-                                    shape="square"
-                                    size="small"
-                                    className={styles.squareButton}
-                                    icon={<SubtractRegular />}
-                                    onClick={() => ajustarStock(-1)}
-                                    disabled={bien.stock_actual === 0}
-                                />
-                                <Button
-                                    appearance="outline"
-                                    shape="square"
-                                    size="small"
-                                    className={styles.squareButton}
-                                    icon={<AddRegular />}
-                                    onClick={() => ajustarStock(1)}
-                                />
-                                {valorEdicion !== bien.stock_actual && (
-                                    <Button
-                                        appearance="primary"
-                                        shape="square"
-                                        size="small"
-                                        className={styles.squareButton}
-                                        icon={<CheckmarkRegular />}
-                                        title="Confirmar cambio de stock"
-                                        onMouseDown={(e) => e.preventDefault()}
-                                        onClick={guardarStock}
-                                    />
-                                )}
-                            </div>
-                        </div>
-
-                        {bien.proximo_vencimiento && (
-                            <Text
-                                className={mergeClasses(
-                                    styles.vencimiento,
-                                    estadoVencimiento(bien.proximo_vencimiento) === "danger" && styles.vencimientoDanger,
-                                    estadoVencimiento(bien.proximo_vencimiento) === "warn" && styles.vencimientoWarn,
-                                )}
-                            >
-                                Vence: {new Date(bien.proximo_vencimiento + "T00:00:00").toLocaleDateString('es-AR')}
-                            </Text>
+            <tr>
+                <td>
+                    <Text weight="semibold">{bien.descripcion}</Text>
+                </td>
+                <td>
+                    <Text className={styles.precio}>{precioFormateado}</Text>
+                </td>
+                <td>
+                    <div className={styles.stockGroup}>
+                        <Button
+                            appearance="outline"
+                            shape="square"
+                            size="small"
+                            className={styles.squareButton}
+                            icon={<SubtractRegular />}
+                            aria-label="Restar una unidad"
+                            onClick={() => ajustarStock(-1)}
+                            disabled={bien.stock_actual === 0}
+                        />
+                        <Input
+                            size="small"
+                            type="number"
+                            className={styles.stockInput}
+                            value={String(valorEdicion)}
+                            onChange={(e) => setValorEdicion(Number(e.target.value))}
+                            onFocus={(e) => e.target.select()}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") guardarStock();
+                                if (e.key === "Escape") cancelarEdicionStock();
+                            }}
+                            onBlur={cancelarEdicionStock}
+                            input={{ className: styles.noSpinner }}
+                        />
+                        <Button
+                            appearance="outline"
+                            shape="square"
+                            size="small"
+                            className={styles.squareButton}
+                            icon={<AddRegular />}
+                            aria-label="Sumar una unidad"
+                            onClick={() => ajustarStock(1)}
+                        />
+                        {valorEdicion !== bien.stock_actual && (
+                            <Button
+                                appearance="primary"
+                                shape="square"
+                                size="small"
+                                className={styles.squareButton}
+                                icon={<CheckmarkRegular />}
+                                title="Confirmar cambio de stock"
+                                aria-label="Confirmar cambio de stock"
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={guardarStock}
+                            />
                         )}
                     </div>
-                </div>
-
-                <Divider />
-
-                <div className={styles.actions}>
-                    <Button
-                        appearance="outline"
-                        icon={<EditRegular />}
-                        onClick={() => setConfirmandoModificar(true)}
-                    >
-                        Modificar
-                    </Button>
-
-                    <Button
-                        appearance="outline"
-                        icon={<DeleteRegular />}
-                        onClick={() => setConfirmandoEliminar(true)}
-                    >
-                        Eliminar
-                    </Button>
-                </div>
-            </Card>
+                </td>
+                <td>
+                    <Badge color={estadoColorMap[estadoTexto]} appearance="filled">
+                        {estadoTexto}
+                    </Badge>
+                </td>
+                <td>
+                    {bien.proximo_vencimiento ? (
+                        <Text
+                            className={mergeClasses(
+                                styles.vencimiento,
+                                estadoVencimiento(bien.proximo_vencimiento) === "danger" && styles.vencimientoDanger,
+                                estadoVencimiento(bien.proximo_vencimiento) === "warn" && styles.vencimientoWarn,
+                            )}
+                        >
+                            {new Date(bien.proximo_vencimiento + "T00:00:00").toLocaleDateString('es-AR')}
+                        </Text>
+                    ) : (
+                        <Text className={styles.vencimiento}>Sin fecha</Text>
+                    )}
+                </td>
+                <td>
+                    <div className={styles.acciones}>
+                        <Button
+                            appearance="outline"
+                            shape="square"
+                            icon={<EditRegular />}
+                            aria-label="Modificar producto"
+                            title="Modificar"
+                            onClick={() => setConfirmandoModificar(true)}
+                        />
+                        <Button
+                            appearance="outline"
+                            shape="square"
+                            icon={<DeleteRegular />}
+                            aria-label="Eliminar producto"
+                            title="Eliminar"
+                            onClick={() => setConfirmandoEliminar(true)}
+                        />
+                    </div>
+                </td>
+            </tr>
 
             <DeletedBienPopUp
                 bien={bien}

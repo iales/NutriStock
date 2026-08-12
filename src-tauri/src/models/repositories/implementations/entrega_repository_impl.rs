@@ -41,11 +41,13 @@ impl EntregaRepository for EntregaRepositoryImpl{
                 return Err(EntregaRepositoryError::StockInsuficiente(bien_id));
             }
 
-            sqlx::query("INSERT INTO item_bien (entrega_id,bien_id,cantidad,precio_unitario_centavos) VALUES (?,?,?,?)")
+            sqlx::query("INSERT INTO item_bien (entrega_id,bien_id,cantidad,precio_unitario_centavos,descripcion,peso_kg) VALUES (?,?,?,?,?,?)")
                 .bind(entrega_id)
                 .bind(bien_id)
                 .bind(item.cantidad)
                 .bind(item.precio_unitario_centavos as i64)
+                .bind(&item.bien.descripcion)
+                .bind(item.bien.peso_kg)
                 .execute(&mut *transaction)
                 .await?;
 
@@ -67,11 +69,13 @@ impl EntregaRepository for EntregaRepositoryImpl{
         
         for item in items_bien {
             let bien_query = format!("{BIEN_SELECT_AGREGADO} WHERE b.id = ? GROUP BY b.id");
-            let bien = sqlx::query_as::<_, Bien>(&bien_query)
+            let mut bien = sqlx::query_as::<_, Bien>(&bien_query)
                 .bind(item.bien_id)
                 .fetch_one(&self.pool)
                 .await?;
-            
+            bien.descripcion = item.descripcion;
+            bien.peso_kg = item.peso_kg;
+
             items.push(ItemBien::new(bien,item.cantidad as u32,item.precio_unitario_centavos as u64));
         }
 
@@ -123,11 +127,13 @@ impl EntregaRepository for EntregaRepositoryImpl{
         
             for item in items_bien {
                 let bien_query = format!("{BIEN_SELECT_AGREGADO} WHERE b.id = ? GROUP BY b.id");
-                let bien = sqlx::query_as::<_, Bien>(&bien_query)
+                let mut bien = sqlx::query_as::<_, Bien>(&bien_query)
                     .bind(item.bien_id)
                     .fetch_one(&self.pool)
                     .await?;
-                
+                bien.descripcion = item.descripcion;
+                bien.peso_kg = item.peso_kg;
+
                 items.push(ItemBien::new(bien,item.cantidad as u32,item.precio_unitario_centavos as u64));
             }
             
@@ -179,5 +185,7 @@ struct ItemBienRow {
     bien_id: i64,
     cantidad: i64,
     precio_unitario_centavos: i64,
+    descripcion: String,
+    peso_kg: f64,
 }
 

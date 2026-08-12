@@ -121,7 +121,7 @@ const useStyles = makeStyles({
         alignItems: "flex-end",
     },
     itemBien: {
-        minWidth: 0,
+        minWidth: 'min-content',
     },
     itemCantidad: {
         flexShrink: 0,
@@ -249,7 +249,16 @@ function NuevaEntregaPage() {
 
     const totalPesoKg = filasValidas.reduce((acc, fila) => acc + fila.bien!.peso_kg * fila.cantidad, 0);
     const totalUnidades = filasValidas.reduce((acc, fila) => acc + fila.cantidad, 0);
-    const totalFormateado = (totalCentavos / 100).toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+    const totalFormateado = (totalCentavos / 100).toLocaleString('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+    });
+    const totalPesoFormateado = totalPesoKg.toLocaleString('es-AR', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+    });
 
     const caiVencido = ultimaAutorizacion ? new Date(ultimaAutorizacion.vencimiento) < new Date() : false;
     const caiEstadoTexto = !ultimaAutorizacion ? "Sin registrar" : caiVencido ? "Vencido" : "Vigente";
@@ -470,7 +479,7 @@ function NuevaEntregaPage() {
                     </Button>
 
                     <Text className={styles.totales}>
-                        Total: {totalFormateado} · {totalPesoKg.toFixed(2)} kg
+                        Total: {totalFormateado} · {totalPesoFormateado} kg
                     </Text>
 
                     <Divider />

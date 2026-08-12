@@ -47,6 +47,8 @@ import { DatosEmpresa } from "../../types/datosEmpresa";
 import CreateAutorizacionRemitoPopUp from "../../components/popups/createAutorizacionRemitoPopUp";
 import DatosEmpresaPopUp from "../../components/popups/datosEmpresaPopUp";
 import RemitoImprimible from "../../components/remito/remitoImprimible";
+import Paginacion from "../../components/paginacion/paginacion";
+import { usePaginacion } from "../../hooks/usePaginacion";
 import { formatRemito } from "./utils";
 
 const useStyles = makeStyles({
@@ -145,10 +147,6 @@ const useStyles = makeStyles({
     },
     filtroFecha: {
         minWidth: "140px",
-    },
-    contadorResultados: {
-        color: tokens.colorNeutralForeground3,
-        fontSize: tokens.fontSizeBase200,
     },
     emptyState: {
         display: "flex",
@@ -287,6 +285,8 @@ function NuevaEntrega() {
     });
 
     const hayFiltrosActivos = busquedaHistorial !== "" || filtroClinicaId !== "todas" || filtroFechaDesde !== "" || filtroFechaHasta !== "";
+
+    const paginacion = usePaginacion(entregasFiltradas);
 
     const limpiarFiltros = () => {
         setBusquedaHistorial("");
@@ -431,9 +431,6 @@ function NuevaEntrega() {
                     </div>
                 ) : (
                 <>
-                <Text className={styles.contadorResultados}>
-                    {entregasFiltradas.length} {entregasFiltradas.length === 1 ? "entrega encontrada" : "entregas encontradas"}
-                </Text>
                 <table className={styles.tabla}>
                     <thead>
                         <tr>
@@ -445,7 +442,7 @@ function NuevaEntrega() {
                         </tr>
                     </thead>
                     <tbody>
-                        {entregasFiltradas.map(entrega => (
+                        {paginacion.itemsPagina.map(entrega => (
                             <tr key={entrega.id}>
                                 <td>
                                     <div className={styles.fechaCelda}>
@@ -480,6 +477,18 @@ function NuevaEntrega() {
                         ))}
                     </tbody>
                 </table>
+
+                <Paginacion
+                    desde={paginacion.desde}
+                    hasta={paginacion.hasta}
+                    total={paginacion.total}
+                    pagina={paginacion.pagina}
+                    totalPaginas={paginacion.totalPaginas}
+                    porPagina={paginacion.porPagina}
+                    etiqueta="entregas"
+                    onCambiarPagina={paginacion.setPagina}
+                    onCambiarPorPagina={paginacion.setPorPagina}
+                />
                 </>
                 )}
             </Card>
