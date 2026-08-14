@@ -90,6 +90,8 @@ function Login() {
         const mainWindow = await WebviewWindow.getByLabel("main");
         await mainWindow?.show();
         await getCurrentWindow().hide();
+        setPassword("");
+        setIngresando(false);
       } else {
         setErrorMessage(respuesta.message);
         setIngresando(false);
