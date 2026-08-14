@@ -7,8 +7,8 @@ pub enum EntregaRepositoryError {
     #[error(transparent)]
     DataBase(#[from] sqlx::Error),
 
-    #[error("Stock insuficiente para el bien {0}")]
-    StockInsuficiente(i64),
+    #[error("No hay suficiente stock de \"{0}\" en depósito")]
+    StockInsuficiente(String),
 }
 
 pub trait EntregaRepository {

@@ -63,6 +63,8 @@ impl AppError {
                 EntregaServiceError::EntregaNotFound(_) => "EntregaNoEncontrada",
                 EntregaServiceError::ClinicaServiceError(_) => "ClinicaService",
                 EntregaServiceError::RemitoIncompleto => "EntregaService",
+                EntregaServiceError::SinItems => "EntregaService",
+                EntregaServiceError::RemitoInvalido => "EntregaService",
             },
             AppError::AutorizacionRemito(err) => match err {
                 AutorizacionRemitoServiceError::AutorizacionRemitoRepository(_) => "AutorizacionRemitoRepository",

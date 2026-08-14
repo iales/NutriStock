@@ -22,13 +22,15 @@ impl EntregaRepository for EntregaRepositoryImpl{
         let mut transaction = self.pool.begin().await?;
          
         let entrega_id: i64 = sqlx::query_scalar(
-            "INSERT INTO entrega (clinica_id, fecha, condicion_venta, remito_punto_venta, remito_numero) VALUES (?, ?, ?, ?, ?) RETURNING id"
+            "INSERT INTO entrega (clinica_id, fecha, condicion_venta, remito_punto_venta, remito_numero, clinica_razon_social, clinica_condicion_iva) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id"
         )
         .bind(entrega.clinica.id)
         .bind(entrega.fecha)
         .bind(entrega.condicion_venta.clone())
         .bind(entrega.remito_punto_venta)
         .bind(entrega.remito_numero)
+        .bind(&entrega.clinica.razon_social)
+        .bind(entrega.clinica.condicion_iva.clone())
         .fetch_one(&mut *transaction)
         .await?;
 
@@ -38,7 +40,7 @@ impl EntregaRepository for EntregaRepositoryImpl{
 
             let satisfecho = consumir_fifo(&mut transaction, bien_id, item.cantidad as i64).await?;
             if !satisfecho {
-                return Err(EntregaRepositoryError::StockInsuficiente(bien_id));
+                return Err(EntregaRepositoryError::StockInsuficiente(item.bien.descripcion.clone()));
             }
 
             sqlx::query("INSERT INTO item_bien (entrega_id,bien_id,cantidad,precio_unitario_centavos,descripcion,peso_kg) VALUES (?,?,?,?,?,?)")
@@ -88,13 +90,13 @@ impl EntregaRepository for EntregaRepositoryImpl{
             return Ok(None);
         };
 
-        let clinica: Clinica = sqlx::query_as
+        let mut clinica: Clinica = sqlx::query_as
             ("SELECT * FROM clinica WHERE id = ?")
             .bind(entrega_row.clinica_id)
             .fetch_one(&self.pool)
             .await?;
-        
-        
+        clinica.razon_social = entrega_row.clinica_razon_social.clone();
+        clinica.condicion_iva = entrega_row.clinica_condicion_iva.clone();
 
         Ok(Some(Entrega::new(
             Some(entrega_row.id),
@@ -137,11 +139,13 @@ impl EntregaRepository for EntregaRepositoryImpl{
                 items.push(ItemBien::new(bien,item.cantidad as u32,item.precio_unitario_centavos as u64));
             }
             
-            let clinica: Clinica = sqlx::query_as
+            let mut clinica: Clinica = sqlx::query_as
                 ("SELECT * FROM clinica WHERE id = ?")
                 .bind(entrega_row.clinica_id)
                 .fetch_one(&self.pool)
                 .await?;
+            clinica.razon_social = entrega_row.clinica_razon_social.clone();
+            clinica.condicion_iva = entrega_row.clinica_condicion_iva.clone();
 
             entregas.push(Entrega::new(
                 Some(entrega_row.id),
@@ -178,6 +182,8 @@ struct EntregaRow {
     condicion_venta: Option<String>,
     remito_punto_venta: Option<i64>,
     remito_numero: Option<i64>,
+    clinica_razon_social: String,
+    clinica_condicion_iva: crate::models::entities::clinica::CondicionIva,
 }
 
 #[derive(sqlx::FromRow)]

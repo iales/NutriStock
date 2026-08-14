@@ -29,6 +29,12 @@ impl <ER: EntregaRepository + Sync, BR: BienService + Sync, CR: ClinicaService +
             if request.remito_punto_venta.is_some() != request.remito_numero.is_some() {
                 return Err(EntregaServiceError::RemitoIncompleto);
             }
+            if request.remito_punto_venta.is_some_and(|v| v <= 0) || request.remito_numero.is_some_and(|v| v <= 0) {
+                return Err(EntregaServiceError::RemitoInvalido);
+            }
+            if request.items.is_empty() {
+                return Err(EntregaServiceError::SinItems);
+            }
             let mut items: Vec<ItemBien> = Vec::new();
             for item in request.items{
                 let bien= self.bien_service.find_by_id(item.bien_id).await?.

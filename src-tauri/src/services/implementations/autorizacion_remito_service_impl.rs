@@ -18,7 +18,7 @@ impl<AR: AutorizacionRemitoRepository + Sync, ER: EntregaRepository + Sync> Auto
 
     async fn crear(&self, request: AutorizacionRemitoCreateRequest) 
      -> Result<AutorizacionRemito, AutorizacionRemitoServiceError> {
-        if request.numero_desde > request.numero_hasta || request.numero_desde <= 0 {
+        if request.numero_desde > request.numero_hasta || request.numero_desde <= 0 || request.punto_venta <= 0 {
             return Err(AutorizacionRemitoServiceError::RangoInvalido);
         }
 

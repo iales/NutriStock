@@ -20,8 +20,14 @@ pub enum EntregaServiceError{
     ClinicaServiceError(#[from] ClinicaServiceError),
 
     #[error("Faltan datos para poder generar el remito")]
-    RemitoIncompleto
-}    
+    RemitoIncompleto,
+
+    #[error("la entrega necesita al menos un producto")]
+    SinItems,
+
+    #[error("el número de remito tiene que ser mayor a cero")]
+    RemitoInvalido,
+}
 
 pub trait EntregaService{
     fn crear_entrega(&self, request: EntregaCreateRequest) -> impl Future<Output= Result<Entrega, EntregaServiceError>> + Send;
