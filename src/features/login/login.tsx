@@ -1,15 +1,18 @@
 import { useState, useRef } from "react";
 import {
+  Card,
+  Title2,
+  Text,
   Field,
   Input,
-  Divider,
   Button,
+  Spinner,
   MessageBar,
   MessageBarBody,
   makeStyles,
   tokens,
 } from "@fluentui/react-components";
-import { PersonRegular, LockClosedRegular } from "@fluentui/react-icons";
+import { PersonRegular, LockClosedRegular, EyeRegular, EyeOffRegular } from "@fluentui/react-icons";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -18,30 +21,45 @@ const useStyles = makeStyles({
   page: {
     display: "flex",
     justifyContent: "center",
-    flexDirection: "column",
     alignItems: "center",
     minHeight: "100vh",
     width: "100%",
     boxSizing: "border-box",
-    paddingTop: '60px',
     backgroundImage: `linear-gradient(180deg, ${tokens.colorNeutralBackground1}, ${tokens.colorBrandBackground2})`,
+  },
+  card: {
+    width: "340px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
     gap: tokens.spacingVerticalS,
+    padding: tokens.spacingHorizontalXL,
+    boxShadow: tokens.shadow28,
   },
   logo: {
-    maxWidth: "120px",
-    height: "auto",
-    display: "block",
-    marginBottom: tokens.spacingVerticalM,
+    width: "56px",
+    height: "56px",
   },
-  field: {
-    minWidth: "250px",
+  title: {
+    marginTop: tokens.spacingVerticalXS,
   },
-  divider: {
-    width: "250px",
-    margin: `${tokens.spacingVerticalXS} 0`,
+  subtitle: {
+    color: tokens.colorNeutralForeground3,
+    marginBottom: tokens.spacingVerticalS,
+  },
+  form: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    gap: tokens.spacingVerticalM,
   },
   submit: {
-    marginTop: tokens.spacingVerticalS,
+    marginTop: tokens.spacingVerticalXS,
+  },
+  sinRevelarNativo: {
+    "&::-ms-reveal, &::-ms-clear": {
+      display: "none",
+    },
   },
 });
 
@@ -49,42 +67,46 @@ function Login() {
   const styles = useStyles();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [ingresando, setIngresando] = useState(false);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {
-      alert("por favor, completar todos los campos");
+      setErrorMessage("Completá usuario y contraseña.");
       return;
     }
-    const datosFormulario = {
-      username: username,
-      password: password,
-    };
 
+    setErrorMessage(null);
+    setIngresando(true);
     try {
-      const respuesta: any = await invoke("login_command", { request: datosFormulario });
-      console.log("Enviando credenciales...", { username, password });
-      console.log("tauri respuesta: ", respuesta);
+      const respuesta: any = await invoke("login_command", {
+        request: { username, password },
+      });
 
       if (respuesta.exito) {
-        console.log("¡Logueado con éxito!", respuesta.message);
         const mainWindow = await WebviewWindow.getByLabel("main");
         await mainWindow?.show();
         await getCurrentWindow().hide();
       } else {
         setErrorMessage(respuesta.message);
+        setIngresando(false);
       }
     } catch (error) {
       console.error("Error fatal en el puente IPC:", error);
+      setErrorMessage("No se pudo conectar. Intentá de nuevo.");
+      setIngresando(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className={styles.page}>
+    <div className={styles.page}>
+      <Card className={styles.card}>
         <img src="/logoVairesMedical.png" alt="Logo de Vaires Medical" className={styles.logo} />
+        <Title2 className={styles.title}>NutriStock</Title2>
+        <Text className={styles.subtitle}>Gestión & Facturación</Text>
 
         {errorMessage && (
           <MessageBar intent="error">
@@ -92,39 +114,57 @@ function Login() {
           </MessageBar>
         )}
 
-        <Field className={styles.field} validationState={errorMessage ? "error" : "none"}>
-          <Input
-            size="small"
-            placeholder="Nombre de usuario"
-            contentBefore={<PersonRegular />}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                passwordInputRef.current?.focus();
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <Field label="Usuario" validationState={errorMessage ? "error" : "none"}>
+            <Input
+              contentBefore={<PersonRegular />}
+              placeholder="Nombre de usuario"
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  passwordInputRef.current?.focus();
+                }
+              }}
+            />
+          </Field>
+
+          <Field label="Contraseña" validationState={errorMessage ? "error" : "none"}>
+            <Input
+              ref={passwordInputRef}
+              type={mostrarPassword ? "text" : "password"}
+              placeholder="Contraseña"
+              contentBefore={<LockClosedRegular />}
+              contentAfter={
+                <Button
+                  type="button"
+                  appearance="transparent"
+                  size="small"
+                  icon={mostrarPassword ? <EyeOffRegular /> : <EyeRegular />}
+                  aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  onClick={() => setMostrarPassword(v => !v)}
+                />
               }
-            }}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </Field>
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              input={{ className: styles.sinRevelarNativo }}
+            />
+          </Field>
 
-        <Divider className={styles.divider} />
-
-        <Field className={styles.field} validationState={errorMessage ? "error" : "none"}>
-          <Input
-            ref={passwordInputRef}
-            size="small"
-            placeholder="Contraseña"
-            type="password"
-            contentBefore={<LockClosedRegular />}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Field>
-
-        <Button type="submit" appearance="primary" size="small" className={styles.submit}>
-          Iniciar Sesión
-        </Button>
-      </div>
-    </form>
+          <Button
+            type="submit"
+            appearance="primary"
+            className={styles.submit}
+            icon={ingresando ? <Spinner size="tiny" /> : undefined}
+            disabled={ingresando}
+          >
+            {ingresando ? "Ingresando…" : "Iniciar sesión"}
+          </Button>
+        </form>
+      </Card>
+    </div>
   );
 }
 

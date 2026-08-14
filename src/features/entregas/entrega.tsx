@@ -64,9 +64,11 @@ const useStyles = makeStyles({
         padding: tokens.spacingHorizontalXL,
     },
     title: {
+        display: "block",
         marginBottom: tokens.spacingVerticalS,
     },
     subtitle: {
+        display: "block",
         color: tokens.colorNeutralForeground3,
     },
     titleRow: {

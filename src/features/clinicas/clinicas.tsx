@@ -39,9 +39,11 @@ const useStyles = makeStyles({
         alignItems: "center",
     },
     title: {
+        display: "block",
         marginBottom: tokens.spacingVerticalS,
     },
     subtitle: {
+        display: "block",
         color: tokens.colorNeutralForeground3,
     },
     metricsRow: {
