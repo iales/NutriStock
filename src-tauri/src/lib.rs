@@ -50,6 +50,8 @@ pub fn run() {
     dotenvy::dotenv().ok();
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .setup(|app| {
             let pool = init_db_pool(app)?;
             app.manage(pool);

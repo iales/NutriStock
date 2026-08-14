@@ -8,6 +8,8 @@
     "opener:default",
     "core:window:allow-get-all-windows",
     "core:window:allow-show",
-    "core:window:allow-hide"
+    "core:window:allow-hide",
+    "updater:default",
+    "process:allow-restart"
   ]
 }
