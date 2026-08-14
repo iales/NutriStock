@@ -7,7 +7,6 @@ import {
     DialogActions,
     Button,
     Field,
-    Input,
     Dropdown,
     Option,
     makeStyles,
@@ -16,6 +15,7 @@ import {
 import { useState, useEffect } from "react";
 import { Bien, CategoriaNutricional, CATEGORIAS_NUTRICIONALES } from "../../types/bien";
 import { invoke } from "@tauri-apps/api/core";
+import Input from "../common/input";
 
 const useStyles = makeStyles({
     content: {
@@ -91,6 +91,8 @@ function CreateBienPopUp(props: CreateBienProps) {
                         <Field label="Peso (kg)">
                             <Input
                                 type="number"
+                                min={0.01}
+                                step={0.01}
                                 value={String(pesoKg)}
                                 onChange={(e) => setPesoKg(Number(e.target.value))}
                                 onFocus={(e) => e.target.select()}
@@ -100,6 +102,8 @@ function CreateBienPopUp(props: CreateBienProps) {
                         <Field label="Precio">
                             <Input
                                 type="number"
+                                min={0}
+                                step={0.01}
                                 value={String(precio)}
                                 onChange={(e) => setPrecio(Number(e.target.value))}
                                 onFocus={(e) => e.target.select()}

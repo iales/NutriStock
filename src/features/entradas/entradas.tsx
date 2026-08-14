@@ -6,7 +6,6 @@ import {
     Field,
     Combobox,
     Option,
-    Input,
     Button,
     Text,
     Divider,
@@ -18,6 +17,7 @@ import {
 } from "@fluentui/react-components";
 import { ArrowDownloadRegular } from "@fluentui/react-icons";
 import { Bien } from "../../types/bien";
+import Input from "../../components/common/input";
 
 const useStyles = makeStyles({
     container: {
@@ -192,6 +192,8 @@ function Entradas() {
                     <Field label="Cantidad">
                         <Input
                             type="number"
+                            min={1}
+                            step={1}
                             value={String(cantidad)}
                             onChange={(e) => setCantidad(Number(e.target.value))}
                             onFocus={(e) => e.target.select()}

@@ -7,7 +7,6 @@ import {
     DialogActions,
     Button,
     Field,
-    Input,
     Dropdown,
     Option,
     MessageBar,
@@ -18,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import { Clinica, CondicionIva } from "../../types/clinica";
 import { invoke } from "@tauri-apps/api/core";
+import Input from "../common/input";
 
 const useStyles = makeStyles({
     content: {

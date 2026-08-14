@@ -7,7 +7,6 @@ import {
     Field,
     Combobox,
     Option,
-    Input,
     Button,
     Divider,
     Text,
@@ -25,6 +24,7 @@ import { Bien } from "../../types/bien";
 import { AutorizacionRemito, SugerenciaRemito } from "../../types/autorizacionRemito";
 import { AppErrorShape, formatRemito } from "./utils";
 import CreateAutorizacionRemitoPopUp from "../../components/popups/createAutorizacionRemitoPopUp";
+import Input from "../../components/common/input";
 
 const useStyles = makeStyles({
     container: {
@@ -271,6 +271,13 @@ function NuevaEntregaPage() {
             setError("Elegí una clínica.");
             return;
         }
+
+        const filaInvalida = items.find(fila => fila.bien !== null && fila.cantidad <= 0);
+        if (filaInvalida) {
+            setError(`"${filaInvalida.bien!.descripcion}" tiene una cantidad inválida — corregila o quitá esa fila.`);
+            return;
+        }
+
         if (filasValidas.length === 0) {
             setError("Agregá al menos un producto con cantidad mayor a cero.");
             return;
@@ -436,6 +443,8 @@ function NuevaEntregaPage() {
                                     <Field label="Cantidad" className={styles.itemCantidad}>
                                         <Input
                                             type="number"
+                                            min={1}
+                                            step={1}
                                             value={String(fila.cantidad)}
                                             onChange={(e) => actualizarFila(fila.key, { cantidad: Number(e.target.value) })}
                                             onFocus={(e) => e.target.select()}
@@ -446,6 +455,8 @@ function NuevaEntregaPage() {
                                     <Field label="Precio (opcional)" className={styles.itemPrecio}>
                                         <Input
                                             type="number"
+                                            min={0}
+                                            step={0.01}
                                             contentBefore="$"
                                             value={String(fila.precioOverride)}
                                             onChange={(e) => actualizarFila(fila.key, { precioOverride: Number(e.target.value) })}
@@ -490,6 +501,8 @@ function NuevaEntregaPage() {
                         <Field label="Punto de venta">
                             <Input
                                 type="number"
+                                min={1}
+                                step={1}
                                 value={remitoPuntoVenta}
                                 onChange={(e) => setRemitoPuntoVenta(e.target.value)}
                                 onFocus={(e) => e.target.select()}
@@ -499,6 +512,8 @@ function NuevaEntregaPage() {
                         <Field label="Número de remito">
                             <Input
                                 type="number"
+                                min={1}
+                                step={1}
                                 value={remitoNumero}
                                 onChange={(e) => setRemitoNumero(e.target.value)}
                                 onFocus={(e) => e.target.select()}

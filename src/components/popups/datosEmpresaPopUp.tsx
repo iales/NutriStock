@@ -7,7 +7,6 @@ import {
     DialogActions,
     Button,
     Field,
-    Input,
     Dropdown,
     Option,
     MessageBar,
@@ -18,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import { DatosEmpresa } from "../../types/datosEmpresa";
 import { CondicionIva } from "../../types/clinica";
+import Input from "../common/input";
 import { invoke } from "@tauri-apps/api/core";
 
 const useStyles = makeStyles({

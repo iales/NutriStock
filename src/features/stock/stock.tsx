@@ -7,7 +7,6 @@ import {
     Dropdown,
     Option,
     Avatar,
-    Input,
     Button,
     Text,
     makeStyles,
@@ -19,6 +18,7 @@ import BienComponent, { estadoBien } from "../../components/bienComponent/bienCo
 import CreateBienPopUp from "../../components/popups/createBienPopUp";
 import Paginacion from "../../components/paginacion/paginacion";
 import { usePaginacion } from "../../hooks/usePaginacion";
+import Input from "../../components/common/input";
 
 const useStyles = makeStyles({
     container: {

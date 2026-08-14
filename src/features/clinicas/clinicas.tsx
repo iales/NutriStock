@@ -7,7 +7,6 @@ import {
     Dropdown,
     Option,
     Avatar,
-    Input,
     Button,
     Text,
     makeStyles,
@@ -20,6 +19,7 @@ import CreateClinicaPopUp from "../../components/popups/createClinicaPopUp";
 import { CONDICIONES_IVA } from "../../components/popups/createClinicaPopUp";
 import Paginacion from "../../components/paginacion/paginacion";
 import { usePaginacion } from "../../hooks/usePaginacion";
+import Input from "../../components/common/input";
 
 const useStyles = makeStyles({
     container: {

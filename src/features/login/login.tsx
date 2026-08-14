@@ -4,7 +4,6 @@ import {
   Title2,
   Text,
   Field,
-  Input,
   Button,
   Spinner,
   MessageBar,
@@ -13,6 +12,7 @@ import {
   tokens,
 } from "@fluentui/react-components";
 import { PersonRegular, LockClosedRegular, EyeRegular, EyeOffRegular } from "@fluentui/react-icons";
+import Input from "../../components/common/input";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";

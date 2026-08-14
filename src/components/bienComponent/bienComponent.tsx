@@ -3,7 +3,6 @@ import {
     Text,
     Badge,
     Button,
-    Input,
     makeStyles,
     tokens,
     mergeClasses,
@@ -19,6 +18,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { useState, useEffect } from "react";
 import DeletedBienPopUp from "../popups/deleteBienPopUp";
 import EditBienPopUp from "../popups/editBienPopUp";
+import Input from "../common/input";
 
 const useStyles = makeStyles({
     precio: {
@@ -167,9 +167,11 @@ function BienComponent(props: BienComponentProps) {
                         <Input
                             size="small"
                             type="number"
+                            min={0}
+                            step={1}
                             className={styles.stockInput}
                             value={String(valorEdicion)}
-                            onChange={(e) => setValorEdicion(Number(e.target.value))}
+                            onChange={(e) => setValorEdicion(Math.max(0, Number(e.target.value)))}
                             onFocus={(e) => e.target.select()}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") guardarStock();

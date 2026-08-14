@@ -12,7 +12,6 @@ import {
     Avatar,
     Badge,
     Dropdown,
-    Input,
     Menu,
     MenuTrigger,
     MenuPopover,
@@ -50,6 +49,7 @@ import RemitoImprimible from "../../components/remito/remitoImprimible";
 import Paginacion from "../../components/paginacion/paginacion";
 import { usePaginacion } from "../../hooks/usePaginacion";
 import { formatRemito } from "./utils";
+import Input from "../../components/common/input";
 
 const useStyles = makeStyles({
     container: {

@@ -7,7 +7,6 @@ import {
     DialogActions,
     Button,
     Field,
-    Input,
     MessageBar,
     MessageBarBody,
     Text,
@@ -18,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import { AutorizacionRemito } from "../../types/autorizacionRemito";
 import { invoke } from "@tauri-apps/api/core";
+import Input from "../common/input";
 
 const useStyles = makeStyles({
     content: {
@@ -147,6 +147,8 @@ function CreateAutorizacionRemitoPopUp(props: CreateAutorizacionRemitoProps) {
                         <Field label="Punto de venta">
                             <Input
                                 type="number"
+                                min={1}
+                                step={1}
                                 value={String(puntoVenta)}
                                 onChange={(e) => setPuntoVenta(Number(e.target.value))}
                                 onFocus={(e) => e.target.select()}
@@ -156,6 +158,8 @@ function CreateAutorizacionRemitoPopUp(props: CreateAutorizacionRemitoProps) {
                         <Field label="Número desde">
                             <Input
                                 type="number"
+                                min={1}
+                                step={1}
                                 value={String(numeroDesde)}
                                 onChange={(e) => setNumeroDesde(Number(e.target.value))}
                                 onFocus={(e) => e.target.select()}
@@ -165,6 +169,8 @@ function CreateAutorizacionRemitoPopUp(props: CreateAutorizacionRemitoProps) {
                         <Field label="Número hasta">
                             <Input
                                 type="number"
+                                min={1}
+                                step={1}
                                 value={String(numeroHasta)}
                                 onChange={(e) => setNumeroHasta(Number(e.target.value))}
                                 onFocus={(e) => e.target.select()}
