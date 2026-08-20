@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import {
   Button,
@@ -20,6 +20,7 @@ import {
 } from "@fluentui/react-components";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { getVersion } from "@tauri-apps/api/app";
 import {
   VehicleTruckRegular,
   BoxRegular,
@@ -169,6 +170,11 @@ function AppLayout() {
   const [instalando, setInstalando] = useState(false);
   const [progreso, setProgreso] = useState<number | null>(null);
   const [errorActualizacion, setErrorActualizacion] = useState<string | null>(null);
+  const [version, setVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    getVersion().then(setVersion).catch(() => {});
+  }, []);
 
   const handleBuscarActualizaciones = async () => {
     setBuscando(true);
@@ -260,6 +266,9 @@ function AppLayout() {
           >
             {buscando ? "Buscando…" : "Buscar actualizaciones"}
           </Button>
+          {version && isExpanded && (
+            <Caption1 className={styles.updateStatus}>Versión {version}</Caption1>
+          )}
         </div>
       </div>
 
