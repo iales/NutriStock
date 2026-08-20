@@ -267,7 +267,7 @@ function AppLayout() {
             {buscando ? "Buscando…" : "Buscar actualizaciones"}
           </Button>
           {version && isExpanded && (
-            <Caption1 className={styles.updateStatus}>Versión {version}</Caption1>
+            <Caption1 className={styles.updateStatus}>v{version}</Caption1>
           )}
         </div>
       </div>
