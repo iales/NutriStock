@@ -14,16 +14,6 @@
   
     "windows": [
       {
-        "label": "login",
-        "title": "Iniciar Sesión",
-        "width": 640,
-        "height": 480,
-        "resizable": false,
-        "fullscreen": false,
-        "maximizable": false,
-        "visible": true
-      },
-      {
         "label": "main",
         "title": "NutriStock",
         "url": "index.html#/entregas",
@@ -32,7 +22,7 @@
         "minWidth": 1024,
         "minHeight": 650,
         "resizable": true,
-        "visible": false
+        "visible": true
       }
     ],
 

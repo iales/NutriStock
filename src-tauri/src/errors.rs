@@ -1,6 +1,5 @@
 use thiserror::Error;
 use crate::services::clinica_service::ClinicaServiceError;
-use crate::services::service_login::LoginServiceError;
 use crate::services::bien_service::BienServiceError;
 use crate::services::lote_bien_service::LoteBienServiceError;
 use crate::services::entrega_service::EntregaServiceError;
@@ -9,9 +8,6 @@ use crate::services::datos_empresa_service::DatosEmpresaServiceError;
 
 #[derive(Debug, Error)]
 pub enum AppError{
-    #[error(transparent)]
-    Login(#[from] LoginServiceError),
-
     #[error(transparent)]
     Bien(#[from] BienServiceError),
 
@@ -34,7 +30,6 @@ pub enum AppError{
 impl AppError {
     fn tipo(&self) -> &'static str {
         match self {
-            AppError::Login(_) => "Login",
             AppError::Bien(err) => match err {
                 BienServiceError::BienRepository(_) => "BienRepositorio",
                 BienServiceError::InvalidWeight => "PesoInvalido",

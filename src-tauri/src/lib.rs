@@ -3,7 +3,6 @@ pub mod models;
 pub mod services;
 pub mod errors;
 
-use crate::commands::login_command::login_command;
 use crate::commands::bien_command::{
     crear_bien_command, listar_bienes_command, ajustar_stock_command, setear_stock_command,
     actualizar_bien_command, eliminar_bien_command,
@@ -47,7 +46,6 @@ fn init_db_pool(app: &tauri::App) -> Result<sqlx::SqlitePool, Box<dyn std::error
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    dotenvy::dotenv().ok();
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
@@ -58,7 +56,6 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            login_command,
             crear_bien_command,
             listar_bienes_command,
             ajustar_stock_command,

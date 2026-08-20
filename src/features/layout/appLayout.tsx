@@ -18,8 +18,6 @@ import {
   MessageBarBody,
   Spinner,
 } from "@fluentui/react-components";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import {
@@ -27,7 +25,6 @@ import {
   BoxRegular,
   BriefcaseMedicalRegular,
   ArrowDownloadRegular,
-  SignOutRegular,
   ArrowSyncRegular,
 } from "@fluentui/react-icons";
 
@@ -173,12 +170,6 @@ function AppLayout() {
   const [progreso, setProgreso] = useState<number | null>(null);
   const [errorActualizacion, setErrorActualizacion] = useState<string | null>(null);
 
-  const handleLogout = async () => {
-    const loginWindow = await WebviewWindow.getByLabel("login");
-    await loginWindow?.show();
-    await getCurrentWindow().hide();
-  };
-
   const handleBuscarActualizaciones = async () => {
     setBuscando(true);
     setEstadoBusqueda(null);
@@ -268,14 +259,6 @@ function AppLayout() {
             disabled={buscando}
           >
             {buscando ? "Buscando…" : "Buscar actualizaciones"}
-          </Button>
-          <Button
-            appearance="subtle"
-            icon={<SignOutRegular />}
-            className={styles.navItem}
-            onClick={handleLogout}
-          >
-            Cerrar sesión
           </Button>
         </div>
       </div>

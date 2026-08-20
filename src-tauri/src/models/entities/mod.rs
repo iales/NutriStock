@@ -1,4 +1,3 @@
-pub mod auth;
 pub mod bien;
 pub mod lote_bien;
 pub mod item_bien;

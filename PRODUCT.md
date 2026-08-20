@@ -30,7 +30,7 @@ Runs as a local Tauri desktop app (Windows), single location (Luján, Provincia 
 - **Entregas:** deliveries to a clínica with line items; on-screen totals (kg, price) are informational only and never appear on the printed remito.
 - **Autorización CAI:** tracks ARCA-issued printing authorizations (CAI code, punto de venta, number range, expiration) and suggests the next available remito number. Never blocks creating an entrega — a missing, expired, or exhausted CAI only surfaces a warning, because the physical preimpreso paper exists independent of what is registered in the app.
 - **Datos de la Empresa:** single company profile (razón social, subtítulo, CUIT, domicilio, email, condición IVA, ingresos brutos, inicio de actividades) used as the remito's letterhead/emisor data.
-- No user accounts, roles, or permissions — one login, anyone with access can do anything.
+- No user accounts, roles, permissions, or login screen — whoever has access to Lili's PC (already gated by her Windows login) can do anything. There is no meaningful security boundary inside the app itself.
 - No cloud sync — fully local SQLite via Tauri; not designed for concurrent multi-machine use.
 - No delivery status tracking (e.g. Entregado/En camino/Anulado) — considered and explicitly dropped as unnecessary.
 - Single punto de venta / single CAI lineage assumed; the data model does not yet support two authorizations active at once.
